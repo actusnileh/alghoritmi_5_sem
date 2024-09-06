@@ -20,7 +20,7 @@ def get_sorting_service():
 async def get_timing_algorithm_sorting(
     size_massive: int = Query(
         ge=1,
-        le=100_000,
+        le=500_000,
         description="Количество элементов в массиве",
         default=10000,
     ),

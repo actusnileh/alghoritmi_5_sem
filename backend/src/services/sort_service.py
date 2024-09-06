@@ -22,7 +22,9 @@ class SortingService:
     def generate_random_array(self, size: int) -> list[int]:
         if size <= 0:
             raise ValueError("Размер должен быть больше 0.")
-        return [random.SystemRandom.randint(1, 10) for _ in range(size)]
+
+        rand_gen = random.SystemRandom()
+        return [rand_gen.randint(1, 10) for _ in range(size)]
 
     def sort_array(self, arr: list[int], sorted_percent: int) -> list[int]:
         if not (0 <= sorted_percent <= 100):

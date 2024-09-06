@@ -13,38 +13,47 @@ import { MainWindowProps } from "../../types/lab1_types";
 
 const exampleSortingResults = [
     {
-        algorithm: "SortDirectInclusion",
+        algorithm: "SortDirectInclusion (n²)",
         times: {
             "10 000": "1.184263",
-            "100 000": "471.69584703s",
-            "500 000": "6.78s",
+            "100 000": "120.69563221931458",
+            "500 000": "6.78",
         },
     },
     {
-        algorithm: "SortDirectSelection",
-        times: { "10 000": "1.556144", "100 000": "1.45s", "500 000": "7.23s" },
+        algorithm: "SortDirectSelection (n²)",
+        times: {
+            "10 000": "1.556144",
+            "100 000": "156.65176558494568",
+            "500 000": "7.23",
+        },
     },
     {
-        algorithm: "SortDirectExchange",
-        times: { "10 000": "4.001043", "100 000": "1.20s", "500 000": "6.50s" },
+        algorithm: "SortDirectExchange (n²)",
+        times: {
+            "10 000": "4.001043",
+            "100 000": "401.85486793518066",
+            "500 000": "6.50",
+        },
     },
     {
-        algorithm: "QuickSort",
+        algorithm: "QuickSort (n log n)",
         times: {
             "10 000": "0.001278",
-            "100 000": "1.628890s",
-            "500 000": "25.062675s",
+            "100 000": "0.012976408004760742",
+            "500 000": "25.062675",
         },
     },
     {
-        algorithm: "ShellSort",
+        algorithm: "ShellSort (n log² n)",
         times: {
             "10 000": "0.010780",
-            "100 000": "1.536879s",
-            "500 000": "6.645918s",
+            "100 000": "0.13507890701293945",
+            "500 000": "6.645918",
         },
     },
 ];
+
 export const MainWindow: React.FC<MainWindowProps> = ({
     sortingResults,
     loading,
@@ -52,6 +61,9 @@ export const MainWindow: React.FC<MainWindowProps> = ({
     setSortPercent,
     fetchSortingResults,
 }) => {
+    const minTime = Math.min(...sortingResults.map((result) => result.time));
+    const maxTime = Math.max(...sortingResults.map((result) => result.time));
+
     return (
         <Container my="xl">
             <Title order={2} mb="xl">
@@ -94,7 +106,17 @@ export const MainWindow: React.FC<MainWindowProps> = ({
                                 <td style={{ textAlign: "center" }}>
                                     {result.name}
                                 </td>
-                                <td style={{ textAlign: "center" }}>
+                                <td
+                                    style={{
+                                        textAlign: "center",
+                                        color:
+                                            result.time === minTime
+                                                ? "green"
+                                                : result.time === maxTime
+                                                ? "red"
+                                                : "white",
+                                    }}
+                                >
                                     {result.time.toFixed(6)}
                                 </td>
                             </tr>
