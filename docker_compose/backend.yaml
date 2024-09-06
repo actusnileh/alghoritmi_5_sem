@@ -1,0 +1,17 @@
+services:
+    fastapi:
+        container_name: alghoritm_back
+        build:
+            context: ../backend
+            dockerfile: Dockerfile
+        ports:
+            - "8000:8000"
+        command: /bin/sh -c "uvicorn --factory src.main:create_app --reload --host 0.0.0.0 --port 8000"
+        volumes:
+            - ../backend:/backend
+        networks:
+            - alghoritm
+
+networks:
+    alghoritm:
+        driver: bridge
