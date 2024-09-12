@@ -17,7 +17,7 @@ const exampleSortingResults = [
         times: {
             "10 000": "1.184263",
             "100 000": "120.69563221931458",
-            "500 000": "6.78",
+            "500 000": "603.478161097",
         },
     },
     {
@@ -25,7 +25,7 @@ const exampleSortingResults = [
         times: {
             "10 000": "1.556144",
             "100 000": "156.65176558494568",
-            "500 000": "7.23",
+            "500 000": "783.258827925",
         },
     },
     {
@@ -33,7 +33,7 @@ const exampleSortingResults = [
         times: {
             "10 000": "4.001043",
             "100 000": "401.85486793518066",
-            "500 000": "6.50",
+            "500 000": "2009.27433968",
         },
     },
     {
@@ -41,7 +41,7 @@ const exampleSortingResults = [
         times: {
             "10 000": "0.001278",
             "100 000": "0.012976408004760742",
-            "500 000": "25.062675",
+            "500 000": "0.06488204002",
         },
     },
     {
@@ -49,7 +49,7 @@ const exampleSortingResults = [
         times: {
             "10 000": "0.010780",
             "100 000": "0.13507890701293945",
-            "500 000": "6.645918",
+            "500 000": "0.67539453506",
         },
     },
 ];
@@ -59,6 +59,8 @@ export const MainWindow: React.FC<MainWindowProps> = ({
     loading,
     sortPercent,
     setSortPercent,
+    sortMassive,
+    setSortMassive,
     fetchSortingResults,
 }) => {
     const minTime = Math.min(...sortingResults.map((result) => result.time));
@@ -69,6 +71,19 @@ export const MainWindow: React.FC<MainWindowProps> = ({
             <Title order={2} mb="xl">
                 Лаб. работа №1
             </Title>
+            <Divider
+                my="sm"
+                label="Размер массива"
+                labelPosition="center"
+            />
+            <RadioGroup size="md" value={sortMassive} onChange={setSortMassive}>
+                <Group gap={"xl"} justify="center">
+                    {["1000", "5000", "7000", "10000"].map((massive) => (
+                        <Radio key={massive} value={massive} label={massive} />
+                    ))}
+                </Group>
+            </RadioGroup>
+            <Space h="xl" />
             <Divider
                 my="sm"
                 label="Степень отсортированности массива"

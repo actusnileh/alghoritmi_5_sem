@@ -9,5 +9,7 @@ export interface MainWindowProps {
     loading: boolean;
     sortPercent: string;
     setSortPercent: React.Dispatch<React.SetStateAction<string>>;
+    sortMassive: string;
+    setSortMassive: React.Dispatch<React.SetStateAction<string>>;
     fetchSortingResults: () => void;
 }
