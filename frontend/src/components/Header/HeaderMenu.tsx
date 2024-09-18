@@ -10,8 +10,8 @@ const links = [
 
 export function HeaderMenu() {
     const [opened, { toggle }] = useDisclosure(false);
-    const [active, setActive] = useState(links[0].link);
-
+    const [active, setActive] = useState(window.location.pathname);
+    
     const items = links.map((link) => (
         <a
             key={link.label}
@@ -21,6 +21,7 @@ export function HeaderMenu() {
             onClick={(event) => {
                 event.preventDefault();
                 setActive(link.link);
+                window.location.href = link.link;
             }}
         >
             {link.label}
@@ -31,12 +32,12 @@ export function HeaderMenu() {
         <header className={classes.header}>
             <Container size="md" className={classes.inner}>
                 <Title
-                        style={{ cursor: "pointer" }}
-                        order={3}
-                        onClick={() => (window.location.href = "/")}
-                    >
-                        Алгоритмы, построение и анализ
-                    </Title>
+                    style={{ cursor: "pointer" }}
+                    order={3}
+                    onClick={() => (window.location.href = "/")}
+                >
+                    Алгоритмы, построение и анализ
+                </Title>
                 <Group gap={5} visibleFrom="xs">
                     {items}
                 </Group>
