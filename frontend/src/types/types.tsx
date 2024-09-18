@@ -13,3 +13,7 @@ export interface MainWindowProps {
     setSortMassive: React.Dispatch<React.SetStateAction<string>>;
     fetchSortingResults: () => void;
 }
+
+export interface Lab2WindowProps {
+    onValuesChange?: (values: string) => void;
+}

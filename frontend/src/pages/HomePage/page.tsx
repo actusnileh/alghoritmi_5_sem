@@ -1,7 +1,7 @@
 import { HeaderMenu, MainWindow } from "../../components";
 import { useState } from "react";
 import axios from "axios";
-import { SortingResult } from "../../types/lab1_types";
+import { SortingResult } from "../../types/types";
 
 export const HomePage = () => {
     const [loading, setLoading] = useState(false);

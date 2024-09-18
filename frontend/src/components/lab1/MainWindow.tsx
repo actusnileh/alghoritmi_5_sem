@@ -9,7 +9,7 @@ import {
     RadioGroup,
     Table,
 } from "@mantine/core";
-import { MainWindowProps } from "../../types/lab1_types";
+import { MainWindowProps } from "../../types/types";
 
 const exampleSortingResults = [
     {
