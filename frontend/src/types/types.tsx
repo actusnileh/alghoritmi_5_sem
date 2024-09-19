@@ -16,4 +16,10 @@ export interface MainWindowProps {
 
 export interface Lab2WindowProps {
     onValuesChange?: (values: string) => void;
+    onCalculate: () => void;
+    matrixData?: {
+        matrix: number[][];
+        k: number[][];
+        optimal_brackets: string;
+    };
 }

@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 
 export const Lab2Page: FC = () => {
     const [values, setValues] = useState<string>("");
+    const [matrixData, setMatrixData] = useState<any>(null);
 
     const handleValuesChange = (newValues: string) => {
         setValues(newValues);
@@ -17,6 +18,7 @@ export const Lab2Page: FC = () => {
                 },
             });
             console.log("Matrix result:", response.data);
+            setMatrixData(response.data);
         } catch (error) {
             console.error("Ошибка получения данных с API:", error);
         }
@@ -25,7 +27,11 @@ export const Lab2Page: FC = () => {
     return (
         <>
             <HeaderMenu />
-            <Lab2Window onValuesChange={handleValuesChange} />
+            <Lab2Window
+                onValuesChange={handleValuesChange}
+                onCalculate={fetchMatrixResult}
+                matrixData={matrixData}
+            />
         </>
     );
 };
