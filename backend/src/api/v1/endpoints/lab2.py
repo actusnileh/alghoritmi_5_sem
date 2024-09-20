@@ -24,15 +24,12 @@ async def get_iter_matrix(
     ),
     iter_matrix_service: IterMatrixService = Depends(iter_matrix_service),
 ):
-    try:
-        p = list(map(int, p.split(",")))
-        matrix, k = iter_matrix_service.matrix_chain_order(p)
-        brackets = iter_matrix_service.optimal_parens(k, 0, len(p) - 2)
+    p = list(map(int, p.split(",")))
+    matrix, k = iter_matrix_service.matrix_chain_order(p)
+    brackets = iter_matrix_service.optimal_parens(k, 0, len(p) - 2)
 
-        return IterMatrix(
-            matrix=matrix,
-            k=k,
-            optimal_brackets=brackets,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return IterMatrix(
+        matrix=matrix,
+        k=k,
+        optimal_brackets=brackets,
+    )
