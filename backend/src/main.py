@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.v1.routes import routers as v1_routers
-from src.api.v2.routes import routers as v2_routers
 
 
 def create_app():
@@ -19,6 +18,5 @@ def create_app():
     )
 
     app.include_router(v1_routers, prefix="/v1")
-    app.include_router(v2_routers, prefix="/v2")
 
     return app
