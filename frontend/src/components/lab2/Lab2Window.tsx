@@ -33,10 +33,9 @@ export const Lab2Window: FC<Lab2WindowProps> = ({
 
     useEffect(() => {
         if (onValuesChange) {
-            const allValues = inputs.flatMap(({ firstValue, secondValue }) => [
-                firstValue,
-                secondValue,
-            ]);
+            const allValues = inputs.flatMap(({ firstValue, secondValue }) =>
+                secondValue ? [firstValue, secondValue] : [firstValue]
+            );
             const valuesString = allValues.join(",");
             onValuesChange(valuesString);
         }
