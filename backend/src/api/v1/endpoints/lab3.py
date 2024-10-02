@@ -15,4 +15,9 @@ async def get_lcs(
     element_1: str = Query(description="Первый элемент"),
     element_2: str = Query(description="Второй элемент"),
 ):
-    return LCSResponse(data=LCSService().lcs_table(element_2, element_1))
+    elements, directions = LCSService().lcs_table(element_1, element_2)
+    all_lcs = LCSService().find_all_lcs(
+        elements, element_1, element_2, len(element_1), len(element_2)
+    )
+
+    return LCSResponse(elements=elements, directions=directions, all_lcs=all_lcs)

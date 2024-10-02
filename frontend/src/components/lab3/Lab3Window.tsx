@@ -1,12 +1,26 @@
-import { Container, Title, Button, TextInput, Table } from "@mantine/core";
+import {
+    Container,
+    Title,
+    Button,
+    TextInput,
+    Table,
+    Text,
+} from "@mantine/core";
 import { FC, useState } from "react";
 
 interface Lab3WindowProps {
     onCalculate: (input1: string, input2: string) => Promise<void>;
     lcsData: number[][] | null;
+    directions: string[][] | null;
+    all_lcs: string | null;
 }
 
-export const Lab3Window: FC<Lab3WindowProps> = ({ onCalculate, lcsData }) => {
+export const Lab3Window: FC<Lab3WindowProps> = ({
+    onCalculate,
+    lcsData,
+    directions,
+    all_lcs,
+}) => {
     const [input1, setInput1] = useState("");
     const [input2, setInput2] = useState("");
 
@@ -31,29 +45,66 @@ export const Lab3Window: FC<Lab3WindowProps> = ({ onCalculate, lcsData }) => {
                 Посчитать
             </Button>
             {lcsData && (
-                <Table mt="xl">
-                    <thead>
-                        <tr>
-                            <th></th>
+                <Table
+                    mt="xl"
+                    striped
+                    withTableBorder
+                    withColumnBorders
+                    highlightOnHover
+                >
+                    <Table.Thead>
+                        <Table.Tr>
+                            <Table.Th></Table.Th>
                             {input2.split("").map((char, index) => (
-                                <th key={index}>{char}</th>
+                                <Table.Th key={index}>{char}</Table.Th>
                             ))}
-                        </tr>
-                    </thead>
-                    <tbody>
+                        </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
                         {lcsData.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                                <th>
+                            <Table.Tr key={rowIndex}>
+                                <Table.Th>
                                     {rowIndex === 0 ? "" : input1[rowIndex - 1]}
-                                </th>
+                                </Table.Th>
                                 {row.map((cell, cellIndex) => (
-                                    <td key={cellIndex}>{cell}</td>
+                                    <Table.Td key={cellIndex}>{cell}</Table.Td>
                                 ))}
-                            </tr>
+                            </Table.Tr>
                         ))}
-                    </tbody>
+                    </Table.Tbody>
                 </Table>
             )}
+            {directions && (
+                <Table
+                    mt="xl"
+                    striped
+                    withTableBorder
+                    withColumnBorders
+                    highlightOnHover
+                >
+                    <Table.Thead>
+                        <Table.Tr>
+                            <Table.Th></Table.Th>
+                            {input2.split("").map((char, index) => (
+                                <Table.Th key={index}>{char}</Table.Th>
+                            ))}
+                        </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {directions.map((row, rowIndex) => (
+                            <Table.Tr key={rowIndex}>
+                                <Table.Th>
+                                    {rowIndex === 0 ? "" : input1[rowIndex - 1]}
+                                </Table.Th>
+                                {row.map((cell, cellIndex) => (
+                                    <Table.Td key={cellIndex}>{cell}</Table.Td>
+                                ))}
+                            </Table.Tr>
+                        ))}
+                    </Table.Tbody>
+                </Table>
+            )}
+            <Text>{all_lcs}</Text>
         </Container>
     );
 };

@@ -2,4 +2,6 @@ from pydantic import BaseModel
 
 
 class LCSResponse(BaseModel):
-    data: list[list[int]]
+    elements: list[list[int]]
+    directions: list[list[str]]
+    all_lcs: list[str]
