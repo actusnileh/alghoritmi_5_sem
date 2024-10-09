@@ -1,0 +1,2 @@
+class BackpackService:
+    pass

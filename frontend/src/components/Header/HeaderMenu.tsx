@@ -7,6 +7,7 @@ const links = [
     { link: "/", label: "Лаб.работа №1" },
     { link: "/lab2", label: "Лаб.работа №2" },
     { link: "/lab3", label: "Лаб.работа №3" },
+    { link: "/lab4", label: "Лаб.работа №4" },
 ];
 
 export function HeaderMenu() {
