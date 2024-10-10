@@ -57,23 +57,22 @@ def discrete_backpack(items, capacity):
 
 
 def visualize_discrete_backpack(df_dp):
-    # Отбор колонок с шагом 10
     step = 10
     df_filtered = df_dp.loc[
         :,
         df_dp.columns % step == 0,
-    ]  # Оставляем только столбцы с весами, кратными 10
+    ]
     df_filtered.index = range(
         0,
         len(df_filtered),
-    )  # Переопределяем индексы для более понятного отображения
+    )
 
     plt.figure(figsize=(10, 8))
     sns.heatmap(df_filtered, annot=True, cmap="YlGnBu", fmt="g")
     plt.title("Таблица")
     plt.xlabel("Вес")
     plt.ylabel("Предмет")
-    plt.xticks(rotation=45)  # Поворот меток оси X для лучшей читаемости
+    plt.xticks(rotation=45)
 
     buf = io.BytesIO()
     plt.savefig(buf, format="png")
@@ -85,21 +84,17 @@ def visualize_discrete_backpack(df_dp):
 def visualize_continuous_backpack(items, capacity, total_value, weight_used, fractions):
     plt.figure(figsize=(10, 6))
 
-    # Список для хранения общего использованного веса для каждого предмета
     used_weights = []
-    current_weight = 0  # Текущий использованный вес
+    current_weight = 0
 
     for i, fraction in enumerate(fractions):
         if fraction == 1:
-            current_weight += items[i].weight  # Если предмет полностью использован
+            current_weight += items[i].weight
         else:
-            current_weight += (
-                items[i].weight * fraction
-            )  # Если использована только часть предмета
+            current_weight += items[i].weight * fraction
 
-        used_weights.append(current_weight)  # Добавляем общий использованный вес
+        used_weights.append(current_weight)
 
-    # Для визуализации используем только те предметы, которые были выбраны
     item_labels = [f"Предмет {i + 1}" for i in range(len(items))]
 
     plt.bar(
@@ -110,10 +105,8 @@ def visualize_continuous_backpack(items, capacity, total_value, weight_used, fra
         label="Использованный вес",
     )
 
-    # Настройка меток на оси X
     plt.xticks(range(len(items)), item_labels)
 
-    # Горизонтальная линия для емкости рюкзака
     plt.axhline(y=capacity, color="r", linestyle="--", label="Емкость рюкзака")
     plt.title(
         f"Непрерывный рюкзак\nМаксимальная стоимость: {total_value}\nИспользованный вес: {weight_used}",
