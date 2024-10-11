@@ -21,8 +21,8 @@ interface Lab4WindowProps {
 export const Lab4Window: FC<Lab4WindowProps> = ({ onValuesChange }) => {
     const [inputs, setInputs] = useState([{ firstValue: "", secondValue: "" }]);
     const [capacity, setCapacity] = useState("");
-    const [method, setMethod] = useState("Дискретный"); // Начальное значение для метода
-    const [result, setResult] = useState<any>(null); // Хранит результат
+    const [method, setMethod] = useState("Дискретный");
+    const [result, setResult] = useState<any>(null);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -73,10 +73,11 @@ export const Lab4Window: FC<Lab4WindowProps> = ({ onValuesChange }) => {
             }
 
             const data = await response.json();
-            setResult(data); // Сохраняем результат
-            setError(""); // Сбрасываем ошибку
+            setResult(data);
+            setError("");
         } catch (error) {
-            setResult(null); // Сбрасываем результат при ошибке
+            setResult(null);
+            setError("Произошла ошибка при расчете");
         }
     };
 
@@ -165,7 +166,7 @@ export const Lab4Window: FC<Lab4WindowProps> = ({ onValuesChange }) => {
             </Stack>
 
             {error && (
-                <Text color="red" mt="md">
+                <Text c="red" mt="md">
                     {error}
                 </Text>
             )}
@@ -174,7 +175,26 @@ export const Lab4Window: FC<Lab4WindowProps> = ({ onValuesChange }) => {
                 <div style={{ marginTop: "20px" }}>
                     <Title order={3}>Результаты</Title>
                     <Text>Максимальная стоимость: {result.max_value}</Text>
-                    <div style={{ display: "grid", placeItems: "center" }}>
+
+                    {result.table && (
+                        <div
+                            dangerouslySetInnerHTML={{ __html: result.table }}
+                            style={{
+                                marginTop: "20px",
+                                textAlign: "center",
+                                width: "80%",
+                                margin: "auto",
+                            }}
+                        />
+                    )}
+
+                    <div
+                        style={{
+                            display: "grid",
+                            placeItems: "center",
+                            marginTop: "20px",
+                        }}
+                    >
                         <Image
                             src={result.visualization}
                             alt="Visualization"

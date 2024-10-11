@@ -18,6 +18,7 @@ def continuous_backpack(items, capacity):
     total_value = 0
     weight_used = 0
     fractions = []
+    result_table = []
 
     for item in items:
         if capacity == 0:
@@ -28,36 +29,62 @@ def continuous_backpack(items, capacity):
             weight_used += item.weight
             fractions.append(1)
             capacity -= item.weight
+            result_table.append(
+                {"Вес": item.weight, "Стоимость": item.value, "Доля взятая": 1}
+            )
         else:
             fraction = capacity / item.weight
             total_value += item.value * fraction
             weight_used += capacity
             fractions.append(fraction)
+            result_table.append(
+                {"Вес": item.weight, "Стоимость": item.value, "Доля взятая": fraction}
+            )
             capacity = 0
 
-    return total_value, weight_used, fractions
+    result_df = pd.DataFrame(result_table)
+    return total_value, weight_used, result_df
 
 
 def discrete_backpack(items, capacity):
     n = len(items)
     dp_table = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]
 
+    taken_items = [0] * n
+
     for i in range(1, n + 1):
         for w in range(capacity + 1):
             if items[i - 1].weight <= w:
-                dp_table[i][w] = max(
-                    dp_table[i - 1][w],
-                    dp_table[i - 1][w - items[i - 1].weight] + items[i - 1].value,
-                )
+                if (
+                    dp_table[i - 1][w - items[i - 1].weight] + items[i - 1].value
+                    > dp_table[i - 1][w]
+                ):
+                    dp_table[i][w] = (
+                        dp_table[i - 1][w - items[i - 1].weight] + items[i - 1].value
+                    )
+                    taken_items[i - 1] = 1
+                else:
+                    dp_table[i][w] = dp_table[i - 1][w]
             else:
                 dp_table[i][w] = dp_table[i - 1][w]
 
     df_dp = pd.DataFrame(dp_table)
-    return df_dp, dp_table[n][capacity]
+
+    items_taken_info = pd.DataFrame(
+        {
+            "Вес": [item.weight for item in items],
+            "Стоимость": [item.value for item in items],
+            "Взят": [
+                "Да" if taken_items[i] == 1 else "Нет" for i in range(len(taken_items))
+            ],
+        }
+    )
+
+    return df_dp, dp_table[n][capacity], items_taken_info
 
 
 def visualize_discrete_backpack(df_dp):
-    step = 10
+    step = 1
     df_filtered = df_dp.loc[
         :,
         df_dp.columns % step == 0,

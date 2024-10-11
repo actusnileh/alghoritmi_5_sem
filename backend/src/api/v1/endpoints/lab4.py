@@ -38,26 +38,33 @@ async def get_backpack(
     ]
 
     if method == MethodSchema.Continuous:
-        total_value, weight_used, fractions = continuous_backpack(items, capacity)
+        total_value, weight_used, result_df = continuous_backpack(items, capacity)
         buf = visualize_continuous_backpack(
             items,
             capacity,
             total_value,
             weight_used,
-            fractions,
+            result_df["Доля взятая"].tolist(),
         )
 
         img_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+        table_html = result_df.to_html(index=False)
+
         return {
             "max_value": total_value,
             "visualization": f"data:image/png;base64,{img_base64}",
+            "table": table_html,
         }
+
     elif method == MethodSchema.Discrete:
-        df, max_value = discrete_backpack(items, capacity)
+        df, max_value, items_taken_info = discrete_backpack(items, capacity)
         buf = visualize_discrete_backpack(df)
 
         img_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+        table_html = items_taken_info.to_html(index=False)
+
         return {
             "max_value": max_value,
             "visualization": f"data:image/png;base64,{img_base64}",
+            "table": table_html,
         }
