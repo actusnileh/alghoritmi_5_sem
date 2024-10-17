@@ -4,10 +4,11 @@ import { useDisclosure } from "@mantine/hooks";
 import classes from "./HeaderMenu.module.css";
 
 const links = [
-    { link: "/", label: "Лаб.работа №1" },
-    { link: "/lab2", label: "Лаб.работа №2" },
-    { link: "/lab3", label: "Лаб.работа №3" },
-    { link: "/lab4", label: "Лаб.работа №4" },
+    { link: "/", label: "№1" },
+    { link: "/lab2", label: "№2" },
+    { link: "/lab3", label: "№3" },
+    { link: "/lab4", label: "№4" },
+    { link: "/lab5", label: "№5" },
 ];
 
 export function HeaderMenu() {
