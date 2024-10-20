@@ -1,7 +1,7 @@
 # 🚀 Алгоритмы, построение и анализ
 
 <p align="center">
-  <img align="center" width="280" src="https://synergy.ru/assets/academy/uploads/274.jpg" style="border-radius: 50px;" alt="Алгоритмы"/>
+  <img align="center" width="280" src="https://cdn-icons-png.flaticon.com/512/2172/2172943.png" alt="Алгоритмы"/>
 </p>
 
 ## 📚 Описание
