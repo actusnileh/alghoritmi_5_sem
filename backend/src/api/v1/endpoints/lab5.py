@@ -1,47 +1,66 @@
-# src/api/btree_router.py
+from random import SystemRandom
 
-from typing import Optional
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Query,
+)
+
 from src.services.b_tree import BTree
-from src.schema.btree_schema import BTreeResponse, KeyValuePair
+
 
 router = APIRouter(tags=["Лаб. работа №5 (Б-Дерево)"], prefix="/lab_5")
 
-# Инициализация B-дерева с порядком t
-btree = BTree(t=3)
+btree = BTree(t=2)
 
 
-@router.post("/insert", response_model=BTreeResponse)
-async def insert_node(
-    key: int = Query(..., description="Ключ для вставки"),
-    value: int = Query(..., description="Значение для вставки"),
-):
-    btree.insert_key((key, value))
-    return BTreeResponse(keys=[KeyValuePair(key=key, value=value)])
+@router.post("/clear")
+async def clear():
+    global btree
+    try:
+        btree = BTree(t=2)
+        return {"message": "Дерево очищено"}
+    except Exception as e:
+        return {"message": "Ошибка при очистке дерева", "error": str(e)}, 500
 
 
-@router.get("/search", response_model=Optional[BTreeResponse])
-async def search_key(
-    key: int = Query(..., description="Ключ для поиска"),
-):
+@router.post("/insert", response_model=dict)
+async def insert_node(key: int = Query(..., description="Ключ для вставки")):
+    btree.insert_key(key)
+    return {"message": f"Ключ {key} вставлен"}
+
+
+@router.get("/search", response_model=dict)
+async def search_key(key: int = Query(..., description="Ключ для поиска")):
     result = btree.search_key(key)
     if result is None:
-        raise HTTPException(status_code=404, detail="Key not found")
-    node, index = result
-    return BTreeResponse(
-        keys=[KeyValuePair(key=node.keys[index][0], value=node.keys[index][1])]
-    )
+        raise HTTPException(status_code=404, detail="Ключ не найден")
+    return {"message": f"Ключ {key} найден"}
 
 
-@router.get("/", response_model=BTreeResponse)
-async def get_tree():
-    def get_all_keys(node):
-        keys = []
-        if node:
-            keys.extend(node.keys)
-            for child in node.children:
-                keys.extend(get_all_keys(child))
-        return keys
+@router.get("/tree_structure", response_model=dict)
+async def get_tree_structure():
+    btree.print_tree(btree.root)
 
-    keys = get_all_keys(btree.root)
-    return BTreeResponse(keys=[KeyValuePair(key=k[0], value=k[1]) for k in keys])
+    def build_tree(node):
+        if not node.keys:
+            return None
+
+        return {
+            "name": f"Keys: {', '.join(map(str, node.keys))}",
+            "children": [
+                build_tree(child)
+                for child in node.children
+                if build_tree(child) is not None
+            ],
+        }
+
+    return build_tree(btree.root)
+
+
+@router.post("/random_fill")
+def random_fill():
+    for _ in range(10):
+        key = SystemRandom().randint(0, 10)
+        btree.insert_key(key)
+    return {"message": "Дерево заполнено случайными значениями"}

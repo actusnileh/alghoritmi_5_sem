@@ -1,76 +1,126 @@
 class BNode:
     def __init__(self, leaf: bool = False):
-        self.leaf = leaf  # Является ли узлом
-        self.keys = []  # Список ключей
-        self.children = []  # Список дочерних узлов
+        self.leaf = leaf  # Флаг, указывающий, является ли этот узел листом (true) или внутренним узлом (false)
+        self.keys = []  # Список ключей, хранимых в узле
+        self.children = []  # Список дочерних узлов (только для внутренних узлов)
 
 
 class BTree:
-    def __init__(self, t):
-        self.root = BNode(True)
-        self.t = t
+    def __init__(self, t: int):
+        self.root = BNode(
+            True,
+        )  # Инициализируем дерево с корневым узлом, который изначально является листом
+        self.t = t  # Минимальная степень дерева. Это параметр, который определяет
+        # минимальное и максимальное количество ключей в узле
 
     def print_tree(self, x, level=0):
-        print("Уровень", level, " ", len(x.keys), end=":")
-        for i in x.keys:
-            print(i, end=" ")
-        print()
-        level += 1
-        if len(x.children) > 0:
-            for i in x.children:
-                self.print_tree(i, level)
+        """Рекурсивно выводит дерево на экран, начиная с узла 'x'."""
+        if not x.keys:  # Если у узла нет ключей, его пропускаем
+            return
 
-    def split(self, x, i):
-        t = self.t
-        y = x.children[i]
-        z = BNode(y.leaf)
-        x.children.insert(i + 1, z)
-        x.keys.insert(i, y.keys[t - 1])
-        z.keys = y.keys[t : (2 * t) - 1]
-        y.keys = y.keys[0 : t - 1]
-        if not y.leaf:
-            z.child = y.children[t : 2 * t]
-            y.child = y.children[0 : t - 1]
+        indent = "  " * level  # Отступ для отображения уровня узла
+        print(f"{indent}Уровень {level}: {x.keys}")  # Выводим ключи узла и его уровень
 
-    def insert_non_full(self, x, k):
-        i = len(x.keys) - 1
-        if x.leaf:
-            x.keys.append((None, None))
-            while i >= 0 and k[0] < x.keys[i][0]:
-                x.keys[i + 1] = x.keys[i]
+        for (
+            child
+        ) in x.children:  # Рекурсивно вызываем эту функцию для всех дочерних узлов
+            self.print_tree(child, level + 1)
+
+    def split(self, parent, index):
+        """Разделяет переполненный узел на два и перемещает средний ключ в родительский узел."""
+        t = self.t  # Получаем минимальную степень
+        full_node = parent.children[index]  # Получаем переполненный дочерний узел
+        new_node = BNode(
+            leaf=full_node.leaf,
+        )  # Создаем новый узел (будет правой половиной)
+
+        # Переносим ключи и детей из переполненного узла в новый
+        new_node.keys = full_node.keys[t:]  # Переносим правую часть ключей в новый узел
+        full_node.keys = full_node.keys[
+            : t - 1
+        ]  # Левую часть оставляем в оригинальном узле
+
+        if (
+            not full_node.leaf
+        ):  # Если это внутренний узел, также переносим его дочерние узлы
+            new_node.children = full_node.children[
+                t:
+            ]  # Правые дочерние узлы идут к новому узлу
+            full_node.children = full_node.children[
+                :t
+            ]  # Левые остаются у оригинального
+
+        # Вставляем новый узел в родительский узел
+        parent.children.insert(
+            index + 1,
+            new_node,
+        )  # Новый узел добавляем справа от переполненного
+        parent.keys.insert(
+            index,
+            full_node.keys.pop(),
+        )  # Средний ключ из переполненного узла переносим в родителя
+
+    def insert_non_full(self, node, key):
+        """Вставка ключа в узел, который не переполнен."""
+        i = len(node.keys) - 1  # Индекс последнего ключа в узле
+
+        if node.leaf:  # Если узел является листом
+            node.keys.append(None)  # Добавляем заглушку в конец, чтобы сдвигать ключи
+            while (
+                i >= 0 and key < node.keys[i]
+            ):  # Ищем правильную позицию для вставки ключа
+                node.keys[i + 1] = node.keys[i]  # Сдвигаем ключи вправо
                 i -= 1
-            x.keys[i + 1] = k
+            node.keys[i + 1] = key  # Вставляем ключ на найденное место
         else:
-            while i >= 0 and k[0] < x.keys[i][0]:
+            # Ищем подходящий дочерний узел для спуска
+            while i >= 0 and key < node.keys[i]:
                 i -= 1
             i += 1
-            if len(x.children[i].keys) == (2 * self.t) - 1:
-                self.split(x, i)
-                if k[0] > x.keys[i][0]:
+
+            # Если дочерний узел переполнен, разделяем его
+            if len(node.children[i].keys) == 2 * self.t - 1:
+                self.split(node, i)
+                if (
+                    key > node.keys[i]
+                ):  # После разделения возможно, что нужно будет переместиться на следующий узел
                     i += 1
-            self.insert_non_full(x.children[i], k)
+            self.insert_non_full(
+                node.children[i],
+                key,
+            )  # Рекурсивно вставляем ключ в подходящий дочерний узел
 
-    def insert_key(self, k):
+    def insert_key(self, key):
+        """Вставка ключа в дерево."""
         root = self.root
-        if len(root.keys) == (2 * self.t) - 1:
-            new_root = BNode(False)  # Новый корень
-            new_root.children.append(root)
-            self.root = new_root
-            self.split(new_root, 0)
-            self.insert_non_full(new_root, k)
+        if len(root.keys) == 2 * self.t - 1:  # Если корневой узел переполнен
+            new_root = BNode(leaf=False)  # Создаем новый корневой узел
+            new_root.children.append(root)  # Старый корневой узел становится дочерним
+            self.root = new_root  # Новый узел становится корнем
+            self.split(new_root, 0)  # Разделяем старый корень
+            self.insert_non_full(new_root, key)  # Вставляем новый ключ в неполный узел
         else:
-            self.insert_non_full(root, k)
+            self.insert_non_full(
+                root,
+                key,
+            )  # Если корень не переполнен, просто вставляем ключ
 
-    def search_key(self, k, x=None):
-        if x is not None:
-            i = 0
-            while i < len(x.keys) and k > x.keys[i][0]:
-                i += 1
-            if i < len(x.keys) and k == x.keys[i][0]:
-                return (x, i)
-            elif x.leaf:
-                return None
-            else:
-                return self.search_key(k, x.children[i])
-        else:
-            return self.search_key(k, self.root)
+    def search_key(self, key, node=None):
+        """Поиск ключа в дереве."""
+        node = node or self.root  # Начинаем поиск с корня, если узел не указан
+        i = 0
+        while (
+            i < len(node.keys) and key > node.keys[i]
+        ):  # Ищем место, где ключ может находиться
+            i += 1
+
+        if i < len(node.keys) and key == node.keys[i]:  # Если ключ найден
+            return (node, i)  # Возвращаем узел и индекс ключа
+
+        if node.leaf:  # Если это лист, а ключ не найден, то ключа в дереве нет
+            return None
+
+        return self.search_key(
+            key,
+            node.children[i],
+        )  # Рекурсивно ищем ключ в подходящем дочернем узле
