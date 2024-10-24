@@ -11,7 +11,6 @@ class BTree:
         self.t = t  # Минимальная степень дерева
 
     def search(self, k, node=None):
-        """Поиск ключа k в B-дереве"""
         if node is None:
             node = self.root
 
@@ -28,8 +27,9 @@ class BTree:
         return self.search(k, node.children[i])
 
     def insert(self, k):
-        """Вставка нового ключа k в B-дерево"""
         root = self.root
+        if self.search(k):
+            return
         if len(root.keys) == (2 * self.t) - 1:  # Корень переполнен
             new_root = BTreeNode()
             new_root.children.append(self.root)
@@ -38,7 +38,6 @@ class BTree:
         self._insert_non_full(self.root, k)
 
     def _split_child(self, parent, i):
-        """Разделение переполненного дочернего узла"""
         t = self.t
         node_to_split = parent.children[i]
         new_node = BTreeNode(node_to_split.leaf)
@@ -54,7 +53,6 @@ class BTree:
             node_to_split.children = node_to_split.children[0:t]
 
     def _insert_non_full(self, node, k):
-        """Вставка ключа в неполный узел"""
         if node.leaf:
             i = len(node.keys) - 1
             node.keys.append(0)
@@ -74,7 +72,6 @@ class BTree:
             self._insert_non_full(node.children[i], k)
 
     def traverse(self, node=None):
-        """Обход дерева в порядке возрастания"""
         if node is None:
             node = self.root
 
@@ -87,21 +84,122 @@ class BTree:
             self.traverse(node.children[len(node.keys)])
 
     def traverse_as_dict(self, node=None):
-        """Возвращает дерево в виде словаря для визуализации"""
         if node is None:
             node = self.root
 
-        # Формируем узел в формате, необходимом для визуализации
         tree_node = {
-            "name": ", ".join(map(str, node.keys)),  # Объединяем ключи в строку
-            "children": [],  # Инициализируем список детей
+            "name": ", ".join(map(str, node.keys)),
+            "children": [],
         }
 
-        # Если узел не лист, рекурсивно обрабатываем дочерние узлы
         if not node.leaf:
             for child in node.children:
                 tree_node["children"].append(
                     self.traverse_as_dict(child),
-                )  # Добавляем дочерние узлы
+                )
 
         return tree_node
+
+    def delete(self, k, node=None):
+        """Удаление ключа k из B-дерева"""
+        if node is None:
+            node = self.root
+
+        t = self.t
+        i = 0
+        while i < len(node.keys) and k > node.keys[i]:
+            i += 1
+
+        # Случай 1: Ключ находится в узле
+        if i < len(node.keys) and node.keys[i] == k:
+            if node.leaf:
+                node.keys.pop(i)
+            else:
+                self._delete_internal_node(node, k, i)
+        else:
+            if node.leaf:
+                return  # Ключ не найден
+            flag = i == len(node.keys)  # Последний ребенок?
+            if len(node.children[i].keys) < t:
+                self._fill(node, i)
+            if flag and i > len(node.keys):
+                self.delete(k, node.children[i - 1])
+            else:
+                self.delete(k, node.children[i])
+
+    def _delete_internal_node(self, node, k, i):
+        """Удаление ключа из внутреннего узла"""
+        t = self.t
+        if len(node.children[i].keys) >= t:
+            pred = self._get_predecessor(node, i)
+            node.keys[i] = pred
+            self.delete(pred, node.children[i])
+        elif len(node.children[i + 1].keys) >= t:
+            succ = self._get_successor(node, i)
+            node.keys[i] = succ
+            self.delete(succ, node.children[i + 1])
+        else:
+            self._merge(node, i)
+            self.delete(k, node.children[i])
+
+    def _get_predecessor(self, node, i):
+        """Возвращает предшественника ключа"""
+        current = node.children[i]
+        while not current.leaf:
+            current = current.children[-1]
+        return current.keys[-1]
+
+    def _get_successor(self, node, i):
+        """Возвращает преемника ключа"""
+        current = node.children[i + 1]
+        while not current.leaf:
+            current = current.children[0]
+        return current.keys[0]
+
+    def _fill(self, node, i):
+        """Пополнение узла при недостатке ключей"""
+        t = self.t
+        if i != 0 and len(node.children[i - 1].keys) >= t:
+            self._borrow_from_prev(node, i)
+        elif i != len(node.keys) and len(node.children[i + 1].keys) >= t:
+            self._borrow_from_next(node, i)
+        else:
+            if i != len(node.keys):
+                self._merge(node, i)
+            else:
+                self._merge(node, i - 1)
+
+    def _borrow_from_prev(self, node, i):
+        """Заимствование ключа у предыдущего узла"""
+        child = node.children[i]
+        sibling = node.children[i - 1]
+
+        child.keys.insert(0, node.keys[i - 1])
+        if not child.leaf:
+            child.children.insert(0, sibling.children.pop())
+
+        node.keys[i - 1] = sibling.keys.pop()
+
+    def _borrow_from_next(self, node, i):
+        """Заимствование ключа у следующего узла"""
+        child = node.children[i]
+        sibling = node.children[i + 1]
+
+        child.keys.append(node.keys[i])
+        if not child.leaf:
+            child.children.append(sibling.children.pop(0))
+
+        node.keys[i] = sibling.keys.pop(0)
+
+    def _merge(self, node, i):
+        """Слияние двух узлов"""
+        child = node.children[i]
+        sibling = node.children[i + 1]
+
+        child.keys.append(node.keys.pop(i))
+        child.keys.extend(sibling.keys)
+
+        if not child.leaf:
+            child.children.extend(sibling.children)
+
+        node.children.pop(i + 1)
