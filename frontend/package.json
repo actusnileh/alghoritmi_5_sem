@@ -28,6 +28,7 @@
     "react-d3-tree": "^3.6.2",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
+    "reactflow": "^11.11.4",
     "stylelint": "^16.9.0",
     "stylelint-config-standard-scss": "^13.1.0"
   },

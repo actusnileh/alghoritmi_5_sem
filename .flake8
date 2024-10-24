@@ -1,2 +1,2 @@
 [flake8]
-extend-ignore = A003, A002
+extend-ignore = A003, A002, E203, DUO102

@@ -1,155 +1,132 @@
-import {
-    Container,
-    Title,
-    TextInput,
-    Button,
-    Notification,
-} from "@mantine/core";
-import { FC, useEffect, useState } from "react";
+import { FC, useState, useEffect } from "react";
+import { Button, Group, NumberInput, Notification } from "@mantine/core";
 import axios from "axios";
 import Tree from "react-d3-tree";
 
-export const Lab5Window: FC = () => {
-    const [key, setKey] = useState<number>(0);
-    const [searchKey, setSearchKey] = useState<number>(0);
-    const [notification, setNotification] = useState<{
-        message: string;
-        color: string;
-    } | null>(null);
-    const [treeData, setTreeData] = useState<any>(null);
+interface BTreeNode {
+    keys: number[];
+    children: BTreeNode[];
+}
 
-    // Функция для получения структуры дерева
-    const fetchTree = async () => {
+interface BTreeData {
+    name: string;
+    children: BTreeNode[];
+}
+
+// Функция для преобразования B-дерева в формат для react-d3-tree
+const transformBTreeToD3Data = (node: any | undefined): any => {
+    if (!node) {
+        return null; // Если узел не определен, возвращаем null
+    }
+
+    // Изменяем структуру, чтобы использовать name вместо keys
+    return {
+        name: node.name || "Пустой узел", // Используем name из API
+        children: node.children.map(transformBTreeToD3Data), // Рекурсивно преобразуем дочерние узлы
+    };
+};
+
+export const Lab5Window: FC = () => {
+    const [key, setKey] = useState<number>();
+    const [treeData, setTreeData] = useState<BTreeData | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+
+    const getTreeStructure = async () => {
         try {
             const response = await axios.get(
                 "http://0.0.0.0:8000/v1/lab_5/tree_structure"
             );
-            setTreeData(response.data);
+            console.log("B-Tree Data from API:", response.data); // Логируем данные
+            const bTreeData = response.data.tree; // Получаем данные дерева
+            console.log("Parsed B-Tree Data:", bTreeData); // Логируем, что мы получили
+            setTreeData(bTreeData);
         } catch (error) {
-            setNotification({
-                message: "Ошибка получения дерева",
-                color: "red",
-            });
+            setMessage("Ошибка при получении структуры дерева");
         }
     };
 
-    // Функция для получения структуры дерева
+    const insertKey = async () => {
+        if (key !== null) {
+            try {
+                const response = await axios.post(
+                    "http://0.0.0.0:8000/v1/lab_5/insert",
+                    null,
+                    {
+                        params: { key },
+                    }
+                );
+                setMessage(response.data.message);
+                getTreeStructure();
+            } catch (error) {
+                setMessage("Ошибка при вставке ключа");
+            }
+        }
+    };
+
     const clearTree = async () => {
         try {
-            await axios.post("http://0.0.0.0:8000/v1/lab_5/clear");
-        } catch (error) {
-            setNotification({
-                message: "Ошибка очистки дерева",
-                color: "red",
-            });
-        }
-    };
-    // Функция для вставки ключа
-    const handleInsert = async () => {
-        try {
-            await axios.post("http://0.0.0.0:8000/v1/lab_5/insert", null, {
-                params: { key },
-            });
-            setNotification({ message: `Вставлено: ${key}`, color: "green" });
-            fetchTree();
-        } catch (error) {
-            setNotification({ message: "Ошибка вставки", color: "red" });
-        }
-    };
-
-    // Функция для поиска ключа
-    const handleSearch = async () => {
-        try {
-            const response = await axios.get(
-                `http://0.0.0.0:8000/v1/lab_5/search`,
-                { params: { key: searchKey } }
+            const response = await axios.post(
+                "http://0.0.0.0:8000/v1/lab_5/clear"
             );
-            setNotification({ message: response.data.message, color: "blue" });
+            setMessage(response.data.message);
+            getTreeStructure();
         } catch (error) {
-            setNotification({ message: "Ключ не найден", color: "red" });
+            setMessage("Ошибка при очистке дерева");
         }
     };
 
-    // Функция для заполнения дерева случайными ключами
-    const handleRandomFill = async () => {
+    const randomFill = async () => {
         try {
-            await axios.post("http://0.0.0.0:8000/v1/lab_5/random_fill");
-            setNotification({
-                message: "Дерево заполнено случайно",
-                color: "green",
-            });
-            fetchTree();
+            const response = await axios.post(
+                "http://0.0.0.0:8000/v1/lab_5/random_fill"
+            );
+            setMessage(response.data.message);
+            getTreeStructure();
         } catch (error) {
-            setNotification({ message: "Ошибка заполнения", color: "red" });
+            setMessage("Ошибка при заполнении случайными ключами");
         }
     };
 
-    // Получаем дерево при монтировании компонента
     useEffect(() => {
-        fetchTree();
+        getTreeStructure();
     }, []);
 
     return (
-        <Container
-            my="xl"
-            style={{ alignItems: "center", textAlign: "center" }}
-        >
-            <Title order={2} mb="xl">
-                Лаб. работа №5
-            </Title>
-            <Button onClick={handleRandomFill} mb="md" mr="md">
-                Заполнить случайно
-            </Button>
-            <Button onClick={clearTree} color={"red"} mb="md">
-                Очистить
-            </Button>
-            <TextInput
-                placeholder="Ключ для вставки"
-                label="Ключ"
-                value={key}
-                onChange={(e) => setKey(Number(e.currentTarget.value))}
-                mb="md"
-            />
-            <Button mb="xl" onClick={handleInsert}>
-                Вставить
-            </Button>
+        <div>
+            <h1>B-дерево Визуализация</h1>
 
-            <TextInput
-                placeholder="Ключ для поиска"
-                label="Ключ для поиска"
-                value={searchKey}
-                onChange={(e) => setSearchKey(Number(e.currentTarget.value))}
-                mb="md"
-            />
-            <Button onClick={handleSearch} mb="md">
-                Поиск
-            </Button>
+            <Group>
+                <NumberInput value={key} onChange={(value) => setKey(value)} />
+                <Button onClick={insertKey}>Вставить ключ</Button>
+                <Button onClick={clearTree}>Очистить дерево</Button>
+                <Button onClick={randomFill}>
+                    Заполнить случайными ключами
+                </Button>
+            </Group>
 
-            {notification && (
-                <Notification
-                    color={notification.color}
-                    onClose={() => setNotification(null)}
-                    mt="md"
-                >
-                    {notification.message}
+            {message && (
+                <Notification color="teal" onClose={() => setMessage(null)}>
+                    {message}
                 </Notification>
             )}
 
-            {treeData && (
-                <div
-                    style={{
-                        height: "500px",
-                        marginTop: "20px",
-                        backgroundColor: "white",
-                        color: "black",
-                        border: "1px solid #ccc",
-                        borderRadius: "4px",
-                        overflow: "auto", // Добавьте прокрутку при необходимости
-                    }}
-                >
-                    <Tree data={treeData} orientation="vertical" />
-                </div>
-            )}
-        </Container>
+            <div
+                style={{
+                    height: "100vh", // Высота на 100% экрана, минус отступ сверху
+                    backgroundColor: "gray",
+                }}
+            >
+                {treeData ? (
+                    <Tree
+                        data={transformBTreeToD3Data(treeData)}
+                        orientation="vertical"
+                        pathFunc="straight"
+                        translate={{ x: 500, y: 50 }}
+                    />
+                ) : (
+                    <div style={{ color: "white" }}>Дерево пусто</div>
+                )}
+            </div>
+        </div>
     );
 };
