@@ -31,7 +31,7 @@ const transformBTreeToD3Data = (node: any | undefined): any => {
     };
 };
 
-export const Lab5Window: FC = () => {
+export const Lab6Window: FC = () => {
     const [key, setKey] = useState<number>();
     const [del_key, setDelKey] = useState<number>();
     const [search_key, setSearchKey] = useState<number>();
@@ -41,7 +41,7 @@ export const Lab5Window: FC = () => {
     const getTreeStructure = async () => {
         try {
             const response = await axios.get(
-                "http://0.0.0.0:8000/v1/lab_5/tree_structure"
+                "http://0.0.0.0:8000/v1/lab_6/tree_structure"
             );
             const bTreeData = response.data.tree;
             setTreeData(bTreeData);
@@ -54,7 +54,7 @@ export const Lab5Window: FC = () => {
         if (key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:8000/v1/lab_5/insert",
+                    "http://0.0.0.0:8000/v1/lab_6/insert",
                     null,
                     {
                         params: { key },
@@ -72,7 +72,7 @@ export const Lab5Window: FC = () => {
         if (del_key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:8000/v1/lab_5/del",
+                    "http://0.0.0.0:8000/v1/lab_6/del",
                     null,
                     {
                         params: { del_key },
@@ -89,11 +89,10 @@ export const Lab5Window: FC = () => {
     const searchKey = async () => {
         if (search_key !== null) {
             try {
-                const response = await axios.post(
-                    "http://0.0.0.0:8000/v1/lab_5/search",
-                    null,
+                const response = await axios.get(
+                    "http://0.0.0.0:8000/v1/lab_6/search",
                     {
-                        params: { search_key },
+                        params: { key: search_key }, // Параметры передаются здесь
                     }
                 );
                 setMessage(response.data.message);
@@ -103,10 +102,11 @@ export const Lab5Window: FC = () => {
             }
         }
     };
+
     const clearTree = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:8000/v1/lab_5/clear"
+                "http://0.0.0.0:8000/v1/lab_6/clear"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -118,7 +118,7 @@ export const Lab5Window: FC = () => {
     const randomFill = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:8000/v1/lab_5/random_fill"
+                "http://0.0.0.0:8000/v1/lab_6/random_fill"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -133,9 +133,10 @@ export const Lab5Window: FC = () => {
 
     return (
         <div>
-            <Title style={{ textAlign: "center" }}>B-дерево Визуализация</Title>
+            <Title style={{ textAlign: "center" }}>
+                AVL-дерево Визуализация
+            </Title>{" "}
             <Divider my="sm"></Divider>
-
             <Group justify="center">
                 <NumberInput
                     value={key}
@@ -169,7 +170,6 @@ export const Lab5Window: FC = () => {
                     Заполнить случайными ключами
                 </Button>
             </Group>
-
             {message && (
                 <Notification
                     color="teal"
@@ -184,7 +184,6 @@ export const Lab5Window: FC = () => {
                     {message}
                 </Notification>
             )}
-
             <Divider my="sm"></Divider>
             <div
                 style={{
@@ -200,7 +199,7 @@ export const Lab5Window: FC = () => {
                         translate={{ x: 500, y: 50 }}
                     />
                 ) : (
-                    <h3>Дерево пусто</h3>
+                    <div />
                 )}
             </div>
         </div>

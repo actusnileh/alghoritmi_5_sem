@@ -102,6 +102,16 @@ def remove(node: AVLNode, key):
     return balance(node)
 
 
+def search(node: AVLNode, key: int):
+    if not node:
+        return False
+    if key < node.key:
+        return search(node.left, key)
+    elif key > node.key:
+        return search(node.right, key)
+    return True
+
+
 def in_order_traversal(node: AVLNode):
     if node:
         in_order_traversal(node.left)

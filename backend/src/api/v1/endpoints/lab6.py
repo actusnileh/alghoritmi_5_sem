@@ -6,8 +6,9 @@ from fastapi import (
 )
 
 from src.services.avl_tree import (
-    AVLNode,
     insert,
+    remove,
+    search,
     traverse_as_dict,
 )
 
@@ -31,19 +32,19 @@ async def insert_node(key: int = Query(..., description="Ключ для вст�
     return {"message": f"Ключ {key} вставлен в AVL-дерево"}
 
 
+@router.post("/del")
+async def delete(
+    del_key: int = Query(..., description="Элемент, который будет удален из дерева"),
+):
+    global avl_tree
+    remove(avl_tree, del_key)
+    return {"message": f"Ключ {del_key} удален из B-дерева"}
+
+
 @router.get("/search", response_model=dict)
 async def search_key(key: int = Query(..., description="Ключ для поиска")):
     """Поиск ключа в АВЛ-дереве"""
     global avl_tree
-
-    def search(node: AVLNode, key: int) -> bool:
-        if not node:
-            return False
-        if key < node.key:
-            return search(node.left, key)
-        elif key > node.key:
-            return search(node.right, key)
-        return True
 
     result = search(avl_tree, key)
     if result:
