@@ -1,5 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
-import { HomePage, Lab2Page, Lab3Page, Lab4Page, Lab5Page } from "../pages";
+import {
+    HomePage,
+    Lab2Page,
+    Lab3Page,
+    Lab4Page,
+    Lab5Page,
+    Lab6Page,
+} from "../pages";
 
 export const router = createBrowserRouter([
     {
@@ -21,5 +28,9 @@ export const router = createBrowserRouter([
     {
         path: "/lab5",
         element: <Lab5Page />,
+    },
+    {
+        path: "/lab6",
+        element: <Lab6Page />,
     },
 ]);
