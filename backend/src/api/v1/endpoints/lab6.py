@@ -6,6 +6,7 @@ from fastapi import (
 )
 
 from src.services.avl_tree import (
+    calculate_height,
     insert,
     remove,
     search,
@@ -69,3 +70,10 @@ async def random_fill(
     for key in keys:
         avl_tree = insert(avl_tree, key)  # Вставляем каждый случайный ключ в АВЛ-дерево
     return {"message": f"AVL-дерево заполнено {count} случайными ключами", "keys": keys}
+
+
+@router.get("/height", response_model=dict)
+async def get_tree_height():
+    global avl_tree
+    height = calculate_height(avl_tree)  # Необходимо реализовать calculate_height
+    return {"height": height}

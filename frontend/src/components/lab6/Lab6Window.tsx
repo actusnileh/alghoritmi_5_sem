@@ -10,24 +10,24 @@ import {
 import axios from "axios";
 import Tree from "react-d3-tree";
 
-interface BTreeNode {
+interface AVLTreeNode {
     keys: number[];
-    children: BTreeNode[];
+    children: AVLTreeNode[];
 }
 
-interface BTreeData {
+interface AVLTreeData {
     name: string;
-    children: BTreeNode[];
+    children: AVLTreeNode[];
 }
 
-const transformBTreeToD3Data = (node: any | undefined): any => {
+const transformAVLTreeToD3Data = (node: any | undefined): any => {
     if (!node) {
         return null;
     }
 
     return {
         name: node.name || "Пустой узел",
-        children: node.children.map(transformBTreeToD3Data),
+        children: node.children.map(transformAVLTreeToD3Data),
     };
 };
 
@@ -35,9 +35,9 @@ export const Lab6Window: FC = () => {
     const [key, setKey] = useState<number>();
     const [del_key, setDelKey] = useState<number>();
     const [search_key, setSearchKey] = useState<number>();
-    const [treeData, setTreeData] = useState<BTreeData | null>(null);
+    const [treeData, setTreeData] = useState<AVLTreeData | null>(null);
     const [message, setMessage] = useState<string | null>(null);
-
+    const [treeHeight, setTreeHeight] = useState<number | null>(null);
     const getTreeStructure = async () => {
         try {
             const response = await axios.get(
@@ -92,7 +92,7 @@ export const Lab6Window: FC = () => {
                 const response = await axios.get(
                     "http://0.0.0.0:8000/v1/lab_6/search",
                     {
-                        params: { key: search_key }, // Параметры передаются здесь
+                        params: { key: search_key },
                     }
                 );
                 setMessage(response.data.message);
@@ -102,7 +102,17 @@ export const Lab6Window: FC = () => {
             }
         }
     };
-
+    const getHeight = async () => {
+        try {
+            const response = await axios.get(
+                "http://0.0.0.0:8000/v1/lab_6/height"
+            );
+            setTreeHeight(response.data.height);
+            setMessage(`Высота дерева: ${response.data.height}`);
+        } catch (error) {
+            setMessage("Ошибка при получении высоты дерева");
+        }
+    };
     const clearTree = async () => {
         try {
             const response = await axios.post(
@@ -146,7 +156,6 @@ export const Lab6Window: FC = () => {
                 <Button onClick={insertKey} color="green">
                     Вставить ключ
                 </Button>
-
                 <NumberInput
                     value={search_key}
                     w={"100px"}
@@ -155,7 +164,6 @@ export const Lab6Window: FC = () => {
                 <Button color="orange" onClick={searchKey}>
                     Поиск ключа
                 </Button>
-
                 <NumberInput
                     value={del_key}
                     w={"100px"}
@@ -169,6 +177,7 @@ export const Lab6Window: FC = () => {
                 <Button onClick={randomFill}>
                     Заполнить случайными ключами
                 </Button>
+                <Button onClick={getHeight}>Высота дерева</Button>{" "}
             </Group>
             {message && (
                 <Notification
@@ -193,7 +202,7 @@ export const Lab6Window: FC = () => {
             >
                 {treeData ? (
                     <Tree
-                        data={transformBTreeToD3Data(treeData)}
+                        data={transformAVLTreeToD3Data(treeData)}
                         orientation="vertical"
                         pathFunc="straight"
                         translate={{ x: 500, y: 50 }}

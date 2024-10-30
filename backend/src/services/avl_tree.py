@@ -64,8 +64,10 @@ def insert(node: AVLNode, key):
         return AVLNode(key)
     if key < node.key:
         node.left = insert(node.left, key)
-    else:
+    elif key > node.key:
         node.right = insert(node.right, key)
+    else:
+        return node
     return balance(node)
 
 
@@ -89,17 +91,21 @@ def remove(node: AVLNode, key):
     elif key > node.key:
         node.right = remove(node.right, key)
     else:
-        q = node.left
-        r = node.right
-        if r is None:
-            return q
+        # Узел найден (ключ совпадает)
+        if node.left is None:
+            return node.right  # Удаляем корень, заменяем на правое поддерево
+        if node.right is None:
+            return node.left  # Удаляем корень, заменяем на левое поддерево
 
-        min_node = findmin(r)
-        min_node.right = removemin(r)
-        min_node.left = q
-        return balance(min_node)
+        # Удаление узла с двумя дочерними узлами
+        min_node = findmin(node.right)  # Минимальный узел в правом поддереве
+        node.key = min_node.key  # Заменяем ключ корня на минимальный ключ
+        node.right = remove(
+            node.right,
+            min_node.key,
+        )  # Удаляем минимальный узел из правого поддерева
 
-    return balance(node)
+    return balance(node)  # Восстановление баланса
 
 
 def search(node: AVLNode, key: int):
@@ -135,3 +141,15 @@ def traverse_as_dict(node: AVLNode):
             tree_node["children"].append(traverse_as_dict(node.right))
 
     return tree_node
+
+
+def calculate_height(node):
+    if node is None:
+        return -1  # Если узел пустой, высота -1
+    else:
+        # Рекурсивно вычисляем высоту левого и правого поддеревьев
+        left_height = calculate_height(node.left)
+        right_height = calculate_height(node.right)
+
+        # Высота текущего узла - это максимальная высота из левого и правого поддеревьев плюс 1
+        return 1 + max(left_height, right_height)
