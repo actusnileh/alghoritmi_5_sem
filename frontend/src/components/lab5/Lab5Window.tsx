@@ -1,5 +1,12 @@
 import { FC, useState, useEffect } from "react";
-import { Button, Group, NumberInput, Notification } from "@mantine/core";
+import {
+    Button,
+    Group,
+    NumberInput,
+    Notification,
+    Title,
+    Divider,
+} from "@mantine/core";
 import axios from "axios";
 import Tree from "react-d3-tree";
 
@@ -13,21 +20,21 @@ interface BTreeData {
     children: BTreeNode[];
 }
 
-// Функция для преобразования B-дерева в формат для react-d3-tree
 const transformBTreeToD3Data = (node: any | undefined): any => {
     if (!node) {
-        return null; // Если узел не определен, возвращаем null
+        return null;
     }
 
-    // Изменяем структуру, чтобы использовать name вместо keys
     return {
-        name: node.name || "Пустой узел", // Используем name из API
-        children: node.children.map(transformBTreeToD3Data), // Рекурсивно преобразуем дочерние узлы
+        name: node.name || "Пустой узел",
+        children: node.children.map(transformBTreeToD3Data),
     };
 };
 
 export const Lab5Window: FC = () => {
     const [key, setKey] = useState<number>();
+    const [del_key, setDelKey] = useState<number>();
+    const [search_key, setSearchKey] = useState<number>();
     const [treeData, setTreeData] = useState<BTreeData | null>(null);
     const [message, setMessage] = useState<string | null>(null);
 
@@ -36,9 +43,7 @@ export const Lab5Window: FC = () => {
             const response = await axios.get(
                 "http://0.0.0.0:8000/v1/lab_5/tree_structure"
             );
-            console.log("B-Tree Data from API:", response.data); // Логируем данные
-            const bTreeData = response.data.tree; // Получаем данные дерева
-            console.log("Parsed B-Tree Data:", bTreeData); // Логируем, что мы получили
+            const bTreeData = response.data.tree;
             setTreeData(bTreeData);
         } catch (error) {
             setMessage("Ошибка при получении структуры дерева");
@@ -63,6 +68,41 @@ export const Lab5Window: FC = () => {
         }
     };
 
+    const deleteKey = async () => {
+        if (del_key !== null) {
+            try {
+                const response = await axios.post(
+                    "http://0.0.0.0:8000/v1/lab_5/del",
+                    null,
+                    {
+                        params: { del_key },
+                    }
+                );
+                setMessage(response.data.message);
+                getTreeStructure();
+            } catch (error) {
+                setMessage("Ошибка при удалении ключа");
+            }
+        }
+    };
+
+    const searchKey = async () => {
+        if (search_key !== null) {
+            try {
+                const response = await axios.post(
+                    "http://0.0.0.0:8000/v1/lab_5/search",
+                    null,
+                    {
+                        params: { search_key },
+                    }
+                );
+                setMessage(response.data.message);
+                getTreeStructure();
+            } catch (error) {
+                setMessage("Ошибка при поиске ключа");
+            }
+        }
+    };
     const clearTree = async () => {
         try {
             const response = await axios.post(
@@ -93,11 +133,37 @@ export const Lab5Window: FC = () => {
 
     return (
         <div>
-            <h1>B-дерево Визуализация</h1>
+            <Title>B-дерево Визуализация</Title>
+            <Divider my="sm"></Divider>
 
-            <Group>
-                <NumberInput value={key} onChange={(value) => setKey(value)} />
-                <Button onClick={insertKey}>Вставить ключ</Button>
+            <Group justify="center">
+                <NumberInput
+                    value={key}
+                    w={"100px"}
+                    onChange={(value) => setKey(value)}
+                />
+                <Button onClick={insertKey} color="green">
+                    Вставить ключ
+                </Button>
+
+                <NumberInput
+                    value={search_key}
+                    w={"100px"}
+                    onChange={(value) => setSearchKey(value)}
+                />
+                <Button color="orange" onClick={searchKey}>
+                    Поиск ключа
+                </Button>
+
+                <NumberInput
+                    value={del_key}
+                    w={"100px"}
+                    onChange={(value) => setDelKey(value)}
+                />
+                <Button color="red" onClick={deleteKey}>
+                    Удалить ключ
+                </Button>
+                <Divider me={"xl"} />
                 <Button onClick={clearTree}>Очистить дерево</Button>
                 <Button onClick={randomFill}>
                     Заполнить случайными ключами
@@ -105,14 +171,24 @@ export const Lab5Window: FC = () => {
             </Group>
 
             {message && (
-                <Notification color="teal" onClose={() => setMessage(null)}>
+                <Notification
+                    color="teal"
+                    onClose={() => setMessage(null)}
+                    style={{
+                        position: "fixed",
+                        bottom: 20,
+                        left: 20,
+                        zIndex: 1000,
+                    }}
+                >
                     {message}
                 </Notification>
             )}
 
+            <Divider my="sm"></Divider>
             <div
                 style={{
-                    height: "100vh", // Высота на 100% экрана, минус отступ сверху
+                    height: "100vh",
                     backgroundColor: "gray",
                 }}
             >
@@ -124,7 +200,7 @@ export const Lab5Window: FC = () => {
                         translate={{ x: 500, y: 50 }}
                     />
                 ) : (
-                    <div style={{ color: "white" }}>Дерево пусто</div>
+                    <h3>Дерево пусто</h3>
                 )}
             </div>
         </div>
