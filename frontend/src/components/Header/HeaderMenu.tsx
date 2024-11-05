@@ -4,18 +4,18 @@ import { useDisclosure } from "@mantine/hooks";
 import classes from "./HeaderMenu.module.css";
 
 const links = [
-    { link: "/", label: "№1" },
-    { link: "/lab2", label: "№2" },
-    { link: "/lab3", label: "№3" },
-    { link: "/lab4", label: "№4" },
-    { link: "/lab5", label: "№5" },
-    { link: "/lab6", label: "№6" },
+    { link: "/", label: "🧮 №1" },
+    { link: "/lab2", label: "➗ №2" },
+    { link: "/lab3", label: "🎒 №3" },
+    { link: "/lab4", label: "🔡 №4" },
+    { link: "/lab5", label: "🌳 №5" },
+    { link: "/lab6", label: "🌴 №6" },
 ];
 
 export function HeaderMenu() {
     const [opened, { toggle }] = useDisclosure(false);
     const [active, setActive] = useState(window.location.pathname);
-    
+
     const items = links.map((link) => (
         <a
             key={link.label}

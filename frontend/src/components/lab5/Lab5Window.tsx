@@ -133,7 +133,7 @@ export const Lab5Window: FC = () => {
 
     return (
         <div>
-            <Title style={{ textAlign: "center" }}>B-дерево Визуализация</Title>
+            <Title style={{ textAlign: "center" }}>🌳 B-дерево</Title>
             <Divider my="sm"></Divider>
 
             <Group justify="center">

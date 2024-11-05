@@ -143,9 +143,7 @@ export const Lab6Window: FC = () => {
 
     return (
         <div>
-            <Title style={{ textAlign: "center" }}>
-                AVL-дерево Визуализация
-            </Title>{" "}
+            <Title style={{ textAlign: "center" }}>🌴 AVL-дерево</Title>{" "}
             <Divider my="sm"></Divider>
             <Group justify="center">
                 <NumberInput
