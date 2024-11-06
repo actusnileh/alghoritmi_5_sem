@@ -10,6 +10,7 @@ const links = [
     { link: "/lab4", label: "🔡 №4" },
     { link: "/lab5", label: "🌳 №5" },
     { link: "/lab6", label: "🌴 №6" },
+    { link: "/lab7", label: "🔴⚫ №7" },
 ];
 
 export function HeaderMenu() {

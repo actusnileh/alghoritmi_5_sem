@@ -1,155 +1,123 @@
-# Традиционно, узлы АВЛ-дерева хранят не высоту, а разницу высот правого и левого поддеревьев
-# (так называемый balance factor), которая может принимать только три значения -1, 0 и 1
 class AVLNode:
-    def __init__(self, key, left=None, right=None):
-        self.key = key  # Ключ узла
-        self.left = left  # Указатель на левое поддерево
-        self.right = right  # Указатель на правое поддерево
-        self.height = 1  # Высота поддерева с корнем в данном узле
+    def __init__(self, key, height=1, left=None, right=None):
+        self.key = key
+        self.height = height
+        self.left = left
+        self.right = right
 
 
-def height(node: AVLNode):
-    # Обёртка для поля height, может работать с пустыми деревьями
-    return node.height if node else 0
+class AVLTree:
+    def get_height(self, node):
+        return node.height if node else 0
 
+    def get_balance(self, node):
+        return self.get_height(node.left) - self.get_height(node.right) if node else 0
 
-def bfactor(node: AVLNode):
-    # Вычисляем баланс фактор, не работает с пустыми деревьями
-    return height(node.right) - height(node.left)
+    def update_height(self, node):
+        node.height = 1 + max(self.get_height(node.left), self.get_height(node.right))
 
+    def rotate_right(self, y):
+        x = y.left
+        T = x.right
+        x.right = y
+        y.left = T
+        self.update_height(y)
+        self.update_height(x)
+        return x
 
-def fixheight(node: AVLNode):
-    # Восстанавливаем корректное значение поля height заданного узла
-    hl = height(node.left)
-    hr = height(node.right)
-    node.height = max(hl, hr) + 1
+    def rotate_left(self, x):
+        y = x.right
+        T = y.left
+        y.left = x
+        x.right = T
+        self.update_height(x)
+        self.update_height(y)
+        return y
 
+    def insert(self, root, key):
+        if not root:
+            return AVLNode(key)
 
-def rotate_right(node: AVLNode):
-    # Правый поворот
-    q: AVLNode = node.left
-    node.left = q.right
-    q.right = node
-    fixheight(node)
-    fixheight(q)
-    return q
+        if key < root.key:
+            root.left = self.insert(root.left, key)
+        else:
+            root.right = self.insert(root.right, key)
 
+        self.update_height(root)
+        balance = self.get_balance(root)
 
-def rotate_left(node: AVLNode):
-    # Левый поворот
-    p: AVLNode = node.right
-    node.right = p.left
-    p.left = node
-    fixheight(node)
-    fixheight(p)
-    return p
+        if balance > 1:
+            if key < root.left.key:
+                return self.rotate_right(root)
+            else:  #
+                root.left = self.rotate_left(root.left)
+                return self.rotate_right(root)
 
+        if balance < -1:
+            if key > root.right.key:
+                return self.rotate_left(root)
+            else:
+                root.right = self.rotate_right(root.right)
+                return self.rotate_left(root)
 
-def balance(node: AVLNode):
-    # Восстановление баланса узла
-    fixheight(node)
-    if bfactor(node) == 2:
-        if bfactor(node.right) < 0:
-            node.right = rotate_right(node.right)
-        return rotate_left(node)
-    if bfactor(node) == -2:
-        if bfactor(node.left) > 0:
-            node.left = rotate_left(node.left)
-        return rotate_right(node)
-    return node  # Балансировка не нужна
+        return root
 
+    def min_value_node(self, node):
+        current = node
+        while current.left:
+            current = current.left
+        return current
 
-def insert(node: AVLNode, key):
-    if not node:
-        return AVLNode(key)
-    if key < node.key:
-        node.left = insert(node.left, key)
-    elif key > node.key:
-        node.right = insert(node.right, key)
-    else:
-        return node
-    return balance(node)
+    def delete(self, root, key):
+        if not root:
+            return root
 
+        if key < root.key:
+            root.left = self.delete(root.left, key)
+        elif key > root.key:
+            root.right = self.delete(root.right, key)
+        else:
+            if not root.left:
+                return root.right
+            elif not root.right:
+                return root.left
 
-def findmin(node: AVLNode):
-    return findmin(node.left) if node.left else node
+            temp = self.min_value_node(root.right)
+            root.key = temp.key
+            root.right = self.delete(root.right, temp.key)
 
+        self.update_height(root)
+        balance = self.get_balance(root)
 
-def removemin(node: AVLNode):
-    if node.left is None:
-        return node.right
-    node.left = removemin(node.left)
-    return balance(node)
+        if balance > 1:
+            if self.get_balance(root.left) >= 0:
+                return self.rotate_right(root)
+            else:  #
+                root.left = self.rotate_left(root.left)
+                return self.rotate_right(root)
 
+        if balance < -1:
+            if self.get_balance(root.right) <= 0:
+                return self.rotate_left(root)
+            else:
+                root.right = self.rotate_right(root.right)
+                return self.rotate_left(root)
 
-def remove(node: AVLNode, key):
-    if not node:
-        return None
+        return root
 
-    if key < node.key:
-        node.left = remove(node.left, key)
-    elif key > node.key:
-        node.right = remove(node.right, key)
-    else:
-        # Узел найден (ключ совпадает)
-        if node.left is None:
-            return node.right  # Удаляем корень, заменяем на правое поддерево
-        if node.right is None:
-            return node.left  # Удаляем корень, заменяем на левое поддерево
+    def traverse_as_dict(self, node):
+        if node is None:
+            return None
 
-        # Удаление узла с двумя дочерними узлами
-        min_node = findmin(node.right)  # Минимальный узел в правом поддереве
-        node.key = min_node.key  # Заменяем ключ корня на минимальный ключ
-        node.right = remove(
-            node.right,
-            min_node.key,
-        )  # Удаляем минимальный узел из правого поддерева
+        tree_node = {
+            "name": node.key,
+            "children": [],
+        }
 
-    return balance(node)  # Восстановление баланса
+        if node.left or node.right:
+            if node.left:
+                tree_node["children"].append(self.traverse_as_dict(node.left))
+            if node.right:
+                tree_node["children"].append(self.traverse_as_dict(node.right))
 
-
-def search(node: AVLNode, key: int):
-    if not node:
-        return False
-    if key < node.key:
-        return search(node.left, key)
-    elif key > node.key:
-        return search(node.right, key)
-    return True
-
-
-def in_order_traversal(node: AVLNode):
-    if node:
-        in_order_traversal(node.left)
-        print(node.key, end=" ")
-        in_order_traversal(node.right)
-
-
-def traverse_as_dict(node: AVLNode):
-    if node is None:
-        return None
-
-    tree_node = {
-        "name": node.key,  # Используем ключ узла
-        "children": [],  # Инициализируем список детей
-    }
-
-    if node.left or node.right:
-        if node.left:
-            tree_node["children"].append(traverse_as_dict(node.left))
-        if node.right:
-            tree_node["children"].append(traverse_as_dict(node.right))
-
-    return tree_node
-
-
-def calculate_height(node):
-    if node is None:
-        return -1  # Если узел пустой, высота -1
-    else:
-        # Рекурсивно вычисляем высоту левого и правого поддеревьев
-        left_height = calculate_height(node.left)
-        right_height = calculate_height(node.right)
-
-        # Высота текущего узла - это максимальная высота из левого и правого поддеревьев плюс 1
-        return 1 + max(left_height, right_height)
+        return tree_node

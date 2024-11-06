@@ -10,37 +10,37 @@ import {
 import axios from "axios";
 import Tree from "react-d3-tree";
 
-interface AVLTreeNode {
+interface RedTreeNode {
     keys: number[];
-    children: AVLTreeNode[];
+    children: RedTreeNode[];
 }
 
-interface AVLTreeData {
+interface RedTreeData {
     name: string;
-    children: AVLTreeNode[];
+    children: RedTreeNode[];
 }
 
-const transformAVLTreeToD3Data = (node: any | undefined): any => {
+const transformRedTreeToD3Data = (node: any | undefined): any => {
     if (!node) {
         return null;
     }
 
     return {
         name: node.name || "Пустой узел",
-        children: node.children.map(transformAVLTreeToD3Data),
+        children: node.children.map(transformRedTreeToD3Data),
     };
 };
 
-export const Lab6Window: FC = () => {
+export const Lab7Window: FC = () => {
     const [key, setKey] = useState<number>();
     const [del_key, setDelKey] = useState<number>();
     const [search_key, setSearchKey] = useState<number>();
-    const [treeData, setTreeData] = useState<AVLTreeData | null>(null);
+    const [treeData, setTreeData] = useState<RedTreeData | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const getTreeStructure = async () => {
         try {
             const response = await axios.get(
-                "http://0.0.0.0:8000/v1/lab_6/tree_structure"
+                "http://0.0.0.0:8000/v1/lab_7/tree_structure"
             );
             const bTreeData = response.data.tree;
             setTreeData(bTreeData);
@@ -53,7 +53,7 @@ export const Lab6Window: FC = () => {
         if (key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:8000/v1/lab_6/insert",
+                    "http://0.0.0.0:8000/v1/lab_7/insert",
                     null,
                     {
                         params: { key },
@@ -71,7 +71,7 @@ export const Lab6Window: FC = () => {
         if (del_key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:8000/v1/lab_6/del",
+                    "http://0.0.0.0:8000/v1/lab_7/del",
                     null,
                     {
                         params: { del_key },
@@ -89,7 +89,7 @@ export const Lab6Window: FC = () => {
         if (search_key !== null) {
             try {
                 const response = await axios.get(
-                    "http://0.0.0.0:8000/v1/lab_6/search",
+                    "http://0.0.0.0:8000/v1/lab_7/search",
                     {
                         params: { key: search_key },
                     }
@@ -104,7 +104,7 @@ export const Lab6Window: FC = () => {
     const clearTree = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:8000/v1/lab_6/clear"
+                "http://0.0.0.0:8000/v1/lab_7/clear"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -116,7 +116,7 @@ export const Lab6Window: FC = () => {
     const randomFill = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:8000/v1/lab_6/random_fill"
+                "http://0.0.0.0:8000/v1/lab_7/random_fill"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -131,7 +131,7 @@ export const Lab6Window: FC = () => {
 
     return (
         <div>
-            <Title style={{ textAlign: "center" }}>🌴 AVL-дерево</Title>{" "}
+            <Title style={{ textAlign: "center" }}>🔴⚫ Красно-черное дерево</Title>{" "}
             <Divider my="sm"></Divider>
             <Group justify="center">
                 <NumberInput
@@ -187,7 +187,7 @@ export const Lab6Window: FC = () => {
             >
                 {treeData ? (
                     <Tree
-                        data={transformAVLTreeToD3Data(treeData)}
+                        data={transformRedTreeToD3Data(treeData)}
                         orientation="vertical"
                         pathFunc="straight"
                         translate={{ x: 500, y: 50 }}
