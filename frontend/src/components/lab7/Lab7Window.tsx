@@ -27,10 +27,25 @@ const transformRedTreeToD3Data = (node: any | undefined): any => {
 
     return {
         name: node.name || "Пустой узел",
+        attributes: {
+            color: node.color,
+        },
         children: node.children.map(transformRedTreeToD3Data),
     };
 };
+const renderCustomNode = ({ nodeDatum }: any) => {
+    const fillColor =
+        nodeDatum.attributes?.color === "Черный" ? "black" : "red";
 
+    return (
+        <g>
+            <circle r="12" stroke="gray" fill={fillColor} strokeWidth="1.5" />
+            <text fill="white" x="15" dy="4" fontSize="24" strokeWidth="0">
+                {nodeDatum.name}
+            </text>
+        </g>
+    );
+};
 export const Lab7Window: FC = () => {
     const [key, setKey] = useState<number>();
     const [del_key, setDelKey] = useState<number>();
@@ -131,7 +146,9 @@ export const Lab7Window: FC = () => {
 
     return (
         <div>
-            <Title style={{ textAlign: "center" }}>🔴⚫ Красно-черное дерево</Title>{" "}
+            <Title style={{ textAlign: "center" }}>
+                🔴⚫ Красно-черное дерево
+            </Title>{" "}
             <Divider my="sm"></Divider>
             <Group justify="center">
                 <NumberInput
@@ -191,6 +208,7 @@ export const Lab7Window: FC = () => {
                         orientation="vertical"
                         pathFunc="straight"
                         translate={{ x: 500, y: 50 }}
+                        renderCustomNodeElement={renderCustomNode}
                     />
                 ) : (
                     <div />
