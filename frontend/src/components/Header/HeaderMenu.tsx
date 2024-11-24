@@ -6,8 +6,8 @@ import classes from "./HeaderMenu.module.css";
 const links = [
     { link: "/", label: "🧮 №1" },
     { link: "/lab2", label: "➗ №2" },
-    { link: "/lab3", label: "🎒 №3" },
-    { link: "/lab4", label: "🔡 №4" },
+    { link: "/lab3", label: "🔡 №3" },
+    { link: "/lab4", label: "🎒 №4" },
     { link: "/lab5", label: "🌳 №5" },
     { link: "/lab6", label: "🌴 №6" },
     { link: "/lab7", label: "🔴⚫ №7" },

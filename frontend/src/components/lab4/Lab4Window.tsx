@@ -10,6 +10,7 @@ import {
     Button,
     Image,
     Text,
+    Card,
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { FC, useEffect, useState } from "react";
@@ -175,7 +176,21 @@ export const Lab4Window: FC<Lab4WindowProps> = ({ onValuesChange }) => {
                 <div style={{ marginTop: "20px" }}>
                     <Title order={3}>Результаты</Title>
                     <Text>Максимальная стоимость: {result.max_value}</Text>
-
+                    {result.text_result && (
+                        <Card shadow="sm" padding="lg" radius="md" withBorder>
+                            <Text
+                                style={{
+                                    marginTop: "20px",
+                                    textAlign: "center",
+                                    whiteSpace: "pre-wrap",
+                                    borderRadius: "8px",
+                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                }}
+                            >
+                                {result.text_result}
+                            </Text>
+                        </Card>
+                    )}
                     {result.table && (
                         <div
                             dangerouslySetInnerHTML={{ __html: result.table }}
@@ -183,7 +198,11 @@ export const Lab4Window: FC<Lab4WindowProps> = ({ onValuesChange }) => {
                                 marginTop: "20px",
                                 textAlign: "center",
                                 width: "80%",
+                                justifyContent: "center",
+                                alignItems: "center",
                                 margin: "auto",
+                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                overflow: "hidden",
                             }}
                         />
                     )}

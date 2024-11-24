@@ -30,7 +30,7 @@ def continuous_backpack(items, capacity):
             fractions.append(1)
             capacity -= item.weight
             result_table.append(
-                {"Вес": item.weight, "Стоимость": item.value, "Доля взятая": 1}
+                {"Вес": item.weight, "Стоимость": item.value, "Доля взятая": 1},
             )
         else:
             fraction = capacity / item.weight
@@ -38,7 +38,7 @@ def continuous_backpack(items, capacity):
             weight_used += capacity
             fractions.append(fraction)
             result_table.append(
-                {"Вес": item.weight, "Стоимость": item.value, "Доля взятая": fraction}
+                {"Вес": item.weight, "Стоимость": item.value, "Доля взятая": fraction},
             )
             capacity = 0
 
@@ -48,39 +48,70 @@ def continuous_backpack(items, capacity):
 
 def discrete_backpack(items, capacity):
     n = len(items)
-    dp_table = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]
+    # Создание таблицы динамического программирования (DP) для хранения максимальной стоимости
+    dp_table = [[0] * (capacity + 1) for _ in range(n + 1)]
 
-    taken_items = [0] * n
+    explanation_steps = []  # Список шагов объяснения
 
+    # Заполнение таблицы DP
     for i in range(1, n + 1):
         for w in range(capacity + 1):
             if items[i - 1].weight <= w:
-                if (
+                # Рассчитываем возможную новую стоимость при включении предмета
+                new_value = (
                     dp_table[i - 1][w - items[i - 1].weight] + items[i - 1].value
-                    > dp_table[i - 1][w]
-                ):
-                    dp_table[i][w] = (
-                        dp_table[i - 1][w - items[i - 1].weight] + items[i - 1].value
+                )
+                if new_value > dp_table[i - 1][w]:
+                    dp_table[i][w] = new_value
+                    explanation_steps.append(
+                        f"Добавляем предмет {i} (стоимость {items[i - 1].value}), т.к. он улучшает общую стоимость.",
                     )
-                    taken_items[i - 1] = 1
                 else:
                     dp_table[i][w] = dp_table[i - 1][w]
+                    explanation_steps.append(
+                        f"Предмет {i} не добавляется, т.к. его добавление не улучшает стоимость.",
+                    )
             else:
                 dp_table[i][w] = dp_table[i - 1][w]
+                explanation_steps.append(
+                    f"Предмет {i} не помещается в рюкзак, т.к. его вес больше оставшейся вместимости.",
+                )
 
-    df_dp = pd.DataFrame(dp_table)
+    # Восстановление выбранных предметов
+    w = capacity
+    selected_items = [0] * n
+    chosen_items = []
+    explanation_steps.append("Восстановление решения:")
 
+    for i in range(n, 0, -1):
+        if dp_table[i][w] != dp_table[i - 1][w]:
+            selected_items[i - 1] = 1
+            chosen_items.append(items[i - 1])
+            explanation_steps.append(
+                f"Предмет {i} выбран (оставшаяся вместимость {w - items[i - 1].weight}).",
+            )
+            w -= items[i - 1].weight
+        else:
+            explanation_steps.append(
+                f"Предмет {i} не выбран (оставшаяся вместимость {w}).",
+            )
+
+    # Составляем текстовое объяснение
+    text_solution = "\n".join(explanation_steps)
+
+    # Информация о взятых предметах
     items_taken_info = pd.DataFrame(
         {
             "Вес": [item.weight for item in items],
             "Стоимость": [item.value for item in items],
-            "Взят": [
-                "Да" if taken_items[i] == 1 else "Нет" for i in range(len(taken_items))
-            ],
-        }
+            "Взят": ["Да" if selected_items[i] == 1 else "Нет" for i in range(n)],
+        },
     )
 
-    return df_dp, dp_table[n][capacity], items_taken_info
+    # Итоговая стоимость
+    max_value = dp_table[n][capacity]
+
+    return pd.DataFrame(dp_table), max_value, items_taken_info, text_solution
 
 
 def visualize_discrete_backpack(df_dp):

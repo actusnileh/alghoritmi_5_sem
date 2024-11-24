@@ -54,10 +54,14 @@ async def get_backpack(
             "max_value": total_value,
             "visualization": f"data:image/png;base64,{img_base64}",
             "table": table_html,
+            "text_result": "",
         }
 
     elif method == MethodSchema.Discrete:
-        df, max_value, items_taken_info = discrete_backpack(items, capacity)
+        df, max_value, items_taken_info, text_result = discrete_backpack(
+            items,
+            capacity,
+        )
         buf = visualize_discrete_backpack(df)
 
         img_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
@@ -67,4 +71,5 @@ async def get_backpack(
             "max_value": max_value,
             "visualization": f"data:image/png;base64,{img_base64}",
             "table": table_html,
+            "text_result": text_result,
         }

@@ -1,7 +1,6 @@
 from fastapi import (
     APIRouter,
     Depends,
-    HTTPException,
     Query,
 )
 
@@ -25,11 +24,13 @@ async def get_iter_matrix(
     iter_matrix_service: IterMatrixService = Depends(iter_matrix_service),
 ):
     p = list(map(int, p.split(",")))
-    matrix, k = iter_matrix_service.matrix_chain_order(p)
-    brackets = iter_matrix_service.optimal_parens(k, 0, len(p) - 2)
+    matrix, k, steps = iter_matrix_service.matrix_chain_order(p)
+    optimal_brackets, paren_steps = iter_matrix_service.optimal_parens(k, 0, len(p) - 2)
 
+    # Возвращаем не только матрицы и индексы, но и шаги
     return IterMatrix(
         matrix=matrix,
         k=k,
-        optimal_brackets=brackets,
+        optimal_brackets=optimal_brackets,
+        steps=steps + paren_steps,  # Объединяем шаги из обеих функций
     )
