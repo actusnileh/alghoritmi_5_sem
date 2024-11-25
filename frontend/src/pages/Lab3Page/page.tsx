@@ -13,7 +13,7 @@ export const Lab3Page: FC = () => {
         }).toString();
 
         const response = await fetch(
-            `http://0.0.0.0:8000/v1/lab3?${queryParams}`,
+            `http://0.0.0.0:3415/v1/lab3?${queryParams}`,
             {
                 method: "GET",
                 headers: {

@@ -12,7 +12,7 @@ export const Lab2Page: FC = () => {
 
     const fetchMatrixResult = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/v1/lab2`, {
+            const response = await axios.get(`http://localhost:3415/v1/lab2`, {
                 params: {
                     p: values,
                 },

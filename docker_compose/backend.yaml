@@ -6,8 +6,8 @@ services:
             dockerfile: Dockerfile
         ports:
             - "5678:5678"
-            - "8000:8000"
-        command: "debugpy --listen 0.0.0.0:5678 -m uvicorn --factory src.main:create_app --reload --host 0.0.0.0 --port 8000"
+            - "3415:3415"
+        command: "debugpy --listen 0.0.0.0:5678 -m uvicorn --factory src.main:create_app --reload --host 0.0.0.0 --port 3415"
         volumes:
             - ../backend:/backend
         networks:

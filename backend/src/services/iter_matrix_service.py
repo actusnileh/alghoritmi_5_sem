@@ -43,23 +43,53 @@ class IterMatrixService:
 
     @staticmethod
     def optimal_parens(k, i, j) -> tuple[str, list[str]]:
-        stack = [(i, j)]
-        result = []
         steps = []  # Список для записи шагов
+        result, steps = IterMatrixService._optimal_parens_recursive(k, i, j, steps)
+        return result, steps
 
-        while stack:
-            i, j = stack.pop()
+    @staticmethod
+    def _optimal_parens_recursive(k, i, j, steps) -> tuple[str, list[str]]:
+        if i == j:
+            # Если это единственная матрица, возвращаем её имя
+            steps.append(
+                f"Добавляем матрицу A{i+1} в результат, так как это единственная матрица.",
+            )
+            return f"A{i+1}", steps
+        else:
+            # Сначала добавляем открывающую скобку
+            steps.append(
+                f"Добавляем открывающую скобку для матриц с индексами i={i+1}, j={j+1}.",
+            )
 
-            if i == j:
-                result.append(f"A{i+1}")
-                steps.append(f"Добавляем матрицу A{i+1} в результат")
-            else:
-                result.append("(")
-                steps.append(f"Добавляем открывающую скобку для i={i+1}, j={j+1}")
+            # Рекурсивно строим левую часть выражения
+            steps.append(
+                f"Рекурсивно вызываем для левой части: i={i+1}, j={k[i][j]+1}.",
+            )
+            result_left, steps = IterMatrixService._optimal_parens_recursive(
+                k,
+                i,
+                k[i][j],
+                steps,
+            )
 
-                stack.append((k[i][j] + 1, j))
-                stack.append((i, k[i][j]))
+            # Рекурсивно строим правую часть выражения
+            steps.append(
+                f"Рекурсивно вызываем для правой части: i={k[i][j]+2}, j={j+1}.",
+            )
+            result_right, steps = IterMatrixService._optimal_parens_recursive(
+                k,
+                k[i][j] + 1,
+                j,
+                steps,
+            )
 
-        result.append(")")
-        steps.append("Добавляем закрывающую скобку")
-        return "".join(result), steps
+            # После рекурсивного вызова добавляем правую часть и закрывающую скобку
+            result = f"({result_left} x {result_right})"
+            steps.append(
+                f"Добавляем закрывающую скобку для матриц с индексами i={i+1}, j={j+1}.",
+            )
+            steps.append(
+                f"Получаем подвыражение: ({result_left} x {result_right}) для i={i+1}, j={j+1}.",
+            )
+
+            return result, steps

@@ -5,8 +5,8 @@ services:
             context: ../frontend
             dockerfile: Dockerfile
         ports:
-            - "5171:5173"
-        command: /bin/sh -c "pnpm run dev --host"
+            - "3410:3410"
+        command: /bin/sh -c "pnpm run dev --host --port=3410"
         volumes:
             - ../frontend:/frontend
         networks:

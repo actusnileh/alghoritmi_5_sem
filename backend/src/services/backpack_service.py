@@ -63,19 +63,10 @@ def discrete_backpack(items, capacity):
                 )
                 if new_value > dp_table[i - 1][w]:
                     dp_table[i][w] = new_value
-                    explanation_steps.append(
-                        f"Добавляем предмет {i} (стоимость {items[i - 1].value}), т.к. он улучшает общую стоимость.",
-                    )
                 else:
                     dp_table[i][w] = dp_table[i - 1][w]
-                    explanation_steps.append(
-                        f"Предмет {i} не добавляется, т.к. его добавление не улучшает стоимость.",
-                    )
             else:
                 dp_table[i][w] = dp_table[i - 1][w]
-                explanation_steps.append(
-                    f"Предмет {i} не помещается в рюкзак, т.к. его вес больше оставшейся вместимости.",
-                )
 
     # Восстановление выбранных предметов
     w = capacity
@@ -126,7 +117,7 @@ def visualize_discrete_backpack(df_dp):
     )
 
     plt.figure(figsize=(10, 8))
-    sns.heatmap(df_filtered, annot=True, cmap="YlGnBu", fmt="g")
+    sns.heatmap(df_filtered, annot=True, cmap="YlGnBu", fmt="g", cbar=False)
     plt.title("Таблица")
     plt.xlabel("Вес")
     plt.ylabel("Предмет")
