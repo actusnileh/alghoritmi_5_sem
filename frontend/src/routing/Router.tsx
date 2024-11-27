@@ -7,6 +7,7 @@ import {
     Lab5Page,
     Lab6Page,
     Lab7Page,
+    Lab8Page,
 } from "../pages";
 
 export const router = createBrowserRouter([
@@ -37,5 +38,9 @@ export const router = createBrowserRouter([
     {
         path: "/lab7",
         element: <Lab7Page />,
+    },
+    {
+        path: "/lab8",
+        element: <Lab8Page />,
     },
 ]);

@@ -6,3 +6,4 @@ export { Lab4Window } from "./lab4";
 export { Lab5Window } from "./lab5";
 export { Lab6Window } from "./lab6";
 export { Lab7Window } from "./lab7";
+export { Lab8Window } from "./lab8";

@@ -7,6 +7,7 @@ from src.api.v1.endpoints.lab4 import router as lab4
 from src.api.v1.endpoints.lab5 import router as lab5
 from src.api.v1.endpoints.lab6 import router as lab6
 from src.api.v1.endpoints.lab7 import router as lab7
+from src.api.v1.endpoints.lab8 import router as lab8
 
 
 routers = APIRouter()
@@ -18,6 +19,7 @@ router_list = [
     lab5,
     lab6,
     lab7,
+    lab8,
 ]
 
 for router in router_list:

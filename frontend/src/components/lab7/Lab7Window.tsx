@@ -55,7 +55,7 @@ export const Lab7Window: FC = () => {
     const getTreeStructure = async () => {
         try {
             const response = await axios.get(
-                "http://0.0.0.0:3415/v1/lab_7/tree_structure"
+                "http://localhost:3415/v1/lab_7/tree_structure"
             );
             const bTreeData = response.data.tree;
             setTreeData(bTreeData);
@@ -68,7 +68,7 @@ export const Lab7Window: FC = () => {
         if (key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:3415/v1/lab_7/insert",
+                    "http://localhost:3415/v1/lab_7/insert",
                     null,
                     {
                         params: { key },
@@ -86,7 +86,7 @@ export const Lab7Window: FC = () => {
         if (del_key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:3415/v1/lab_7/del",
+                    "http://localhost:3415/v1/lab_7/del",
                     null,
                     {
                         params: { del_key },
@@ -104,7 +104,7 @@ export const Lab7Window: FC = () => {
         if (search_key !== null) {
             try {
                 const response = await axios.get(
-                    "http://0.0.0.0:3415/v1/lab_7/search",
+                    "http://localhost:3415/v1/lab_7/search",
                     {
                         params: { key: search_key },
                     }
@@ -119,7 +119,7 @@ export const Lab7Window: FC = () => {
     const clearTree = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:3415/v1/lab_7/clear"
+                "http://localhost:3415/v1/lab_7/clear"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -131,7 +131,7 @@ export const Lab7Window: FC = () => {
     const randomFill = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:3415/v1/lab_7/random_fill"
+                "http://localhost:3415/v1/lab_7/random_fill"
             );
             setMessage(response.data.message);
             getTreeStructure();

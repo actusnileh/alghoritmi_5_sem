@@ -5,7 +5,6 @@ import {
     TextInput,
     Table,
     Text,
-    Image, // Импорт компонента для отображения изображения
 } from "@mantine/core";
 import { FC, useState } from "react";
 
@@ -43,13 +42,7 @@ export const Lab3Window: FC<Lab3WindowProps> = ({
             </Title>
 
             <Title order={5}>Пример ввода</Title>
-            <Image
-                src="./src/components/example_lab_3.png" // Путь к картинке
-                alt="Пример ввода"
-                w="auto"
-                fit="contain"
-                mb="xl" // Отступ снизу
-            />
+            <Text>Первая строка - слева, вторая сверху</Text>
 
             <TextInput
                 label="Первая строка"

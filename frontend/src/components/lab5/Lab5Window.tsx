@@ -41,7 +41,7 @@ export const Lab5Window: FC = () => {
     const getTreeStructure = async () => {
         try {
             const response = await axios.get(
-                "http://0.0.0.0:3415/v1/lab_5/tree_structure"
+                "http://localhost:3415/v1/lab_5/tree_structure"
             );
             const bTreeData = response.data.tree;
             setTreeData(bTreeData);
@@ -54,7 +54,7 @@ export const Lab5Window: FC = () => {
         if (key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:3415/v1/lab_5/insert",
+                    "http://localhost:3415/v1/lab_5/insert",
                     null,
                     {
                         params: { key },
@@ -72,7 +72,7 @@ export const Lab5Window: FC = () => {
         if (del_key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:3415/v1/lab_5/del",
+                    "http://localhost:3415/v1/lab_5/del",
                     null,
                     {
                         params: { del_key },
@@ -90,7 +90,7 @@ export const Lab5Window: FC = () => {
         if (search_key !== null) {
             try {
                 const response = await axios.post(
-                    "http://0.0.0.0:3415/v1/lab_5/search",
+                    "http://localhost:3415/v1/lab_5/search",
                     null,
                     {
                         params: { search_key },
@@ -106,7 +106,7 @@ export const Lab5Window: FC = () => {
     const clearTree = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:3415/v1/lab_5/clear"
+                "http://localhost:3415/v1/lab_5/clear"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -118,7 +118,7 @@ export const Lab5Window: FC = () => {
     const randomFill = async () => {
         try {
             const response = await axios.post(
-                "http://0.0.0.0:3415/v1/lab_5/random_fill"
+                "http://localhost:3415/v1/lab_5/random_fill"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -140,17 +140,30 @@ export const Lab5Window: FC = () => {
                 <NumberInput
                     value={key}
                     w={"100px"}
-                    onChange={(value) => setKey(value)}
+                    onChange={(value: string | number) =>
+                        setKey(
+                            typeof value === "number"
+                                ? value
+                                : parseFloat(value) || undefined
+                        )
+                    }
                 />
+
                 <Button onClick={insertKey} color="green">
                     Вставить ключ
                 </Button>
-
                 <NumberInput
                     value={search_key}
                     w={"100px"}
-                    onChange={(value) => setSearchKey(value)}
+                    onChange={(value: string | number) =>
+                        setSearchKey(
+                            typeof value === "number"
+                                ? value
+                                : parseFloat(value) || undefined
+                        )
+                    }
                 />
+
                 <Button color="orange" onClick={searchKey}>
                     Поиск ключа
                 </Button>
@@ -158,8 +171,15 @@ export const Lab5Window: FC = () => {
                 <NumberInput
                     value={del_key}
                     w={"100px"}
-                    onChange={(value) => setDelKey(value)}
+                    onChange={(value: string | number) =>
+                        setDelKey(
+                            typeof value === "number"
+                                ? value
+                                : parseFloat(value) || undefined
+                        )
+                    }
                 />
+
                 <Button color="red" onClick={deleteKey}>
                     Удалить ключ
                 </Button>

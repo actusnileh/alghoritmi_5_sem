@@ -228,11 +228,10 @@ export const Lab2Window: FC<Lab2WindowProps> = ({
                         <Title order={4}>Matrix</Title>
                     </Center>
                     {renderMatrix(matrixData.matrix, matrixData.k)}{" "}
-                    {/* Обновили вызов renderMatrix */}
                     <Center mt="xl">
                         <Text size="lg">{matrixData.optimal_brackets}</Text>
                     </Center>
-                    {renderSteps(matrixData.steps)} {/* Отображаем шаги */}
+                    {renderSteps(matrixData.steps)}
                 </Container>
             )}
         </Container>

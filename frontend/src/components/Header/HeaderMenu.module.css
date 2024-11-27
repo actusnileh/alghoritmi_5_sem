@@ -1,37 +1,90 @@
+/* Основной стиль для хедера */
 .header {
-    height: rem(56px);
-    margin-bottom: rem(60px);
+    height: 56px;
+    margin-bottom: 60px;
     background-color: var(--mantine-color-body);
-    border-bottom: rem(1px) solid
+    border-bottom: 1px solid
         light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+    position: relative;
 }
 
+/* Внутреннее содержимое хедера */
 .inner {
-    height: rem(56px);
+    height: 56px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
+/* Стили для ссылок */
 .link {
     display: block;
     line-height: 1;
-    padding: rem(8px) rem(12px);
+    padding: 8px 12px;
     border-radius: var(--mantine-radius-sm);
     text-decoration: none;
     color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
     font-size: var(--mantine-font-size-sm);
     font-weight: 500;
+    transition: background-color 0.3s ease;
+}
 
-    @mixin hover {
-        background-color: light-dark(
-            var(--mantine-color-gray-0),
-            var(--mantine-color-dark-6)
-        );
+.link[data-active="true"] {
+    background-color: var(--mantine-color-blue-filled);
+    color: var(--mantine-color-white);
+}
+
+/* При наведении на ссылки */
+.link:hover {
+    background-color: light-dark(
+        var(--mantine-color-gray-0),
+        var(--mantine-color-dark-6)
+    );
+}
+
+/* Стили для бургер-меню */
+.burger {
+    z-index: 100;
+}
+
+/* Стили для мобильного меню */
+.mobileMenu {
+    display: block;
+    background-color: var(--mantine-color-body);
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.mobileMenu .link {
+    font-size: 18px;
+    padding: 15px;
+    display: block;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.mobileMenu .link:hover {
+    background-color: var(--mantine-color-blue-filled);
+    color: var(--mantine-color-white);
+}
+
+/* Для скрытия обычного меню на мобильных устройствах */
+@media (max-width: 768px) {
+    .group {
+        display: none;
     }
 
-    [data-mantine-color-scheme] &[data-active] {
-        background-color: var(--mantine-color-blue-filled);
-        color: var(--mantine-color-white);
+    .burger {
+        display: block;
+    }
+
+    .mobileMenu {
+        display: block;
     }
 }

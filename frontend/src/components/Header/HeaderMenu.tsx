@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Group, Burger, Title } from "@mantine/core";
+import { Container, Group, Burger, Title, List } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./HeaderMenu.module.css";
 
@@ -10,7 +10,8 @@ const links = [
     { link: "/lab4", label: "🎒 №4" },
     { link: "/lab5", label: "🌳 №5" },
     { link: "/lab6", label: "🌴 №6" },
-    { link: "/lab7", label: "🔴⚫ №7" },
+    { link: "/lab7", label: "🔴 №7" },
+    { link: "/lab8", label: "🧩 №8" },
 ];
 
 export function HeaderMenu() {
@@ -43,16 +44,26 @@ export function HeaderMenu() {
                 >
                     Алгоритмы, построение и анализ
                 </Title>
-                <Group gap={5} visibleFrom="xs">
+                {/* Меню для больших экранов */}
+                <Group gap={5} visibleFrom="xs" className={classes.group}>
                     {items}
                 </Group>
 
+                {/* Бургер-меню */}
                 <Burger
                     opened={opened}
                     onClick={toggle}
-                    hiddenFrom="xs"
                     size="sm"
+                    hiddenFrom="xs"
+                    className={classes.burger}
                 />
+
+                {/* Меню для мобильных устройств */}
+                {opened && (
+                    <List hiddenFrom="xs" className={classes.mobileMenu}>
+                        {items}
+                    </List>
+                )}
             </Container>
         </header>
     );
