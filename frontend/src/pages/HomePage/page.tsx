@@ -13,7 +13,7 @@ export const HomePage = () => {
         try {
             setLoading(true);
             const response = await axios.get(
-                `http://localhost:3415/v1/lab1`,
+                `http://37.128.205.70:3415/v1/lab1`,
                 { params: { size_massive: parseInt(sortMassive),sort_percent: parseInt(sortPercent) } }
             );
             setSortingResults(response.data.data);

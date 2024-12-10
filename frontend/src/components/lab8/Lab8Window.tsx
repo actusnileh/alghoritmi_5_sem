@@ -99,7 +99,7 @@ export const Lab8Window: FC = () => {
             const stringArray = strings.split(",").map((str) => str.trim());
 
             const response = await axios.post(
-                "http://localhost:3415/v1/lab8",
+                "http://37.128.205.70:3415/v1/lab8",
                 stringArray
             );
 

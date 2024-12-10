@@ -55,7 +55,7 @@ export const Lab4Window: FC<Lab4WindowProps> = ({ onValuesChange }) => {
 
         try {
             const response = await fetch(
-                `http://localhost:3415/v1/lab4?capacity=${capacity}&method=${
+                `http://37.128.205.70:3415/v1/lab4?capacity=${capacity}&method=${
                     method === "Дискретный" ? "Дискретный" : "Непрерывный"
                 }`,
                 {

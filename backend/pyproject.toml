@@ -12,7 +12,6 @@ uvicorn = "^0.30.6"
 pandas = "^2.2.3"
 matplotlib = "^3.9.2"
 seaborn = "^0.13.2"
-debugpy = "^1.8.7"
 
 
 [tool.poetry.group.dev.dependencies]

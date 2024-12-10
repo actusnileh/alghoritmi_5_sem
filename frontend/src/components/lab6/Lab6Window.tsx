@@ -1,11 +1,12 @@
 import { FC, useState, useEffect } from "react";
 import {
     Button,
-    Group,
     NumberInput,
     Notification,
     Title,
     Divider,
+    Flex,
+    Box,
 } from "@mantine/core";
 import axios from "axios";
 import Tree from "react-d3-tree";
@@ -40,7 +41,7 @@ export const Lab6Window: FC = () => {
     const getTreeStructure = async () => {
         try {
             const response = await axios.get(
-                "http://localhost:3415/v1/lab_6/tree_structure"
+                "http://37.128.205.70:3415/v1/lab_6/tree_structure"
             );
             const bTreeData = response.data.tree;
             setTreeData(bTreeData);
@@ -53,7 +54,7 @@ export const Lab6Window: FC = () => {
         if (key !== null) {
             try {
                 const response = await axios.post(
-                    "http://localhost:3415/v1/lab_6/insert",
+                    "http://37.128.205.70:3415/v1/lab_6/insert",
                     null,
                     {
                         params: { key },
@@ -71,7 +72,7 @@ export const Lab6Window: FC = () => {
         if (del_key !== null) {
             try {
                 const response = await axios.post(
-                    "http://localhost:3415/v1/lab_6/del",
+                    "http://37.128.205.70:3415/v1/lab_6/del",
                     null,
                     {
                         params: { del_key },
@@ -89,7 +90,7 @@ export const Lab6Window: FC = () => {
         if (search_key !== null) {
             try {
                 const response = await axios.get(
-                    "http://localhost:3415/v1/lab_6/search",
+                    "http://37.128.205.70:3415/v1/lab_6/search",
                     {
                         params: { key: search_key },
                     }
@@ -104,7 +105,7 @@ export const Lab6Window: FC = () => {
     const clearTree = async () => {
         try {
             const response = await axios.post(
-                "http://localhost:3415/v1/lab_6/clear"
+                "http://37.128.205.70:3415/v1/lab_6/clear"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -116,7 +117,7 @@ export const Lab6Window: FC = () => {
     const randomFill = async () => {
         try {
             const response = await axios.post(
-                "http://localhost:3415/v1/lab_6/random_fill"
+                "http://37.128.205.70:3415/v1/lab_6/random_fill"
             );
             setMessage(response.data.message);
             getTreeStructure();
@@ -131,70 +132,116 @@ export const Lab6Window: FC = () => {
 
     return (
         <div>
-            <Title style={{ textAlign: "center" }}>🌴 AVL-дерево</Title>{" "}
-            <Divider my="sm"></Divider>
-            <Group justify="center">
+            <Title style={{ textAlign: "center" }}>🌴 AVL-дерево</Title>
+            <Divider my="sm" />
+
+            <Flex
+                justify="center"
+                direction={{ base: "column", md: "row" }}
+                wrap="wrap"
+                gap="sm"
+                style={{
+                    width: "100%",
+                    paddingLeft: "3%",
+                    paddingRight: "3%",
+                }}
+            >
                 <NumberInput
                     value={key}
-                    w={"100px"}
+                    w="100%"
                     onChange={(value) => setKey(Number(value))}
                 />
-                <Button onClick={insertKey} color="green">
+
+                <Button
+                    onClick={insertKey}
+                    color="green"
+                    style={{ width: "100%" }}
+                >
                     Вставить ключ
                 </Button>
+
                 <NumberInput
                     value={search_key}
-                    w={"100px"}
+                    w="100%"
                     onChange={(value) => setSearchKey(Number(value))}
                 />
-                <Button color="orange" onClick={searchKey}>
+
+                <Button
+                    color="orange"
+                    onClick={searchKey}
+                    style={{ width: "100%" }}
+                >
                     Поиск ключа
                 </Button>
+
                 <NumberInput
                     value={del_key}
-                    w={"100px"}
+                    w="100%"
                     onChange={(value) => setDelKey(Number(value))}
                 />
-                <Button color="red" onClick={deleteKey}>
+
+                <Button
+                    color="red"
+                    onClick={deleteKey}
+                    style={{ width: "100%" }}
+                >
                     Удалить ключ
                 </Button>
-                <Divider me={"xl"} />
-                <Button onClick={clearTree}>Очистить дерево</Button>
-                <Button onClick={randomFill}>
+
+                <Divider my="sm" />
+                <Button onClick={clearTree} style={{ width: "100%" }}>
+                    Очистить дерево
+                </Button>
+                <Button onClick={randomFill} style={{ width: "100%" }}>
                     Заполнить случайными ключами
                 </Button>
-            </Group>
+            </Flex>
+
             {message && (
                 <Notification
                     color="teal"
                     onClose={() => setMessage(null)}
                     style={{
                         position: "fixed",
-                        bottom: 20,
-                        left: 20,
+                        top: 60, // Размещение уведомления сверху
+                        left: "50%", // Центровка по горизонтали
+                        transform: "translateX(-50%)", // Сдвиг на половину ширины, чтобы точно центрировать
                         zIndex: 1000,
                     }}
                 >
                     {message}
                 </Notification>
             )}
-            <Divider my="sm"></Divider>
+
+            <Divider my="sm" />
             <div
                 style={{
-                    height: "100vh",
+                    width: "100%",
+                    height: "50vh",
+                    overflow: "auto",
                     backgroundColor: "gray",
+                    scrollBehavior: "smooth",
                 }}
             >
-                {treeData ? (
-                    <Tree
-                        data={transformAVLTreeToD3Data(treeData)}
-                        orientation="vertical"
-                        pathFunc="straight"
-                        translate={{ x: 500, y: 50 }}
-                    />
-                ) : (
-                    <div />
-                )}
+                <Box
+                    style={{
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    {treeData ? (
+                        <Tree
+                            data={transformAVLTreeToD3Data(treeData)}
+                            orientation="vertical"
+                            pathFunc="straight"
+                            translate={{ x: 500, y: 50 }}
+                        />
+                    ) : (
+                        <text color="dimmed">Дерево пусто</text>
+                    )}
+                </Box>
             </div>
         </div>
     );

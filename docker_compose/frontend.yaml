@@ -6,9 +6,7 @@ services:
             dockerfile: Dockerfile
         ports:
             - "3410:3410"
-        command: /bin/sh -c "pnpm run dev --host --port=3410"
-        volumes:
-            - ../frontend:/frontend
+        command: /bin/sh -c "pnpm build && pnpm preview --host --port 3410"
         networks:
             - alghoritm
 
